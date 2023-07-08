@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 160
+exclude =
+    ./pipeline,
+    ./support,
+    setup.py,
+max-cognitive-complexity=15
+ignore = E126, W503, E501
