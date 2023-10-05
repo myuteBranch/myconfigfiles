@@ -16,7 +16,7 @@ lint: ## 'make lint' will run linting for project
 	@echo "Running linter"
 	gofmt -d .
 
-test: ## 'make test' will run unitests for project
+test: ## 'make test' will run unitest for project
 	@echo "Running Unittests"
 	go test -v ${TEST_PATH} -coverprofile=coverage.out -json > test-report.json
 

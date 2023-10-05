@@ -2,10 +2,10 @@
 
 # update system
 sudo apt update && sudo apt upgrade -y
-sudo apt install git nodejs neovim ripgrep build-base wget
+sudo apt install -y nodejs neovim ripgrep build-base wget 
 # install zsh and oh-my-zsh
 sudo apt install zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 
 # install pl10k
 git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
