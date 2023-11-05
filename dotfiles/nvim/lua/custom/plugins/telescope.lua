@@ -52,5 +52,9 @@ return {
       vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+
+      -- extensions
+      require("telescope").load_extension("persisted")
+      vim.keymap.set('n', '<leader>ss', "<cmd>Telescope persisted<cr>", { desc = '[S]earch [S]essions' })
   end,
 }
