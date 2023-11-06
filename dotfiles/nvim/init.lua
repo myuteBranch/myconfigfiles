@@ -84,29 +84,6 @@ require('lazy').setup({
       vim.cmd.colorscheme 'onedark'
     end,
   },
-
-  {
-    -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
-    -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'onedark',
-        component_separators = '|',
-        section_separators = '',
-      },
-      sections = {
-        lualine_a = {"datetime",'mode'},
-        lualine_b = {'branch', 'diff', 'diagnostics'},
-        lualine_c = {'filename', 'filesize'},
-        lualine_x = {'encoding', 'fileformat', 'filetype'},
-        lualine_y = {'progress'},
-        lualine_z = {'location', 'searchcount'}
-      },
-    },
-  },
-
   {
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
