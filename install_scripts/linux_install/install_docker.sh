@@ -26,6 +26,7 @@ sudo usermod -aG docker $USER
 sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 
+sudo touch /etc/docker/daemon.json
 sudo echo '{
   "log-driver": "json-file",
   "log-opts": {

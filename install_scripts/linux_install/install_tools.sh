@@ -1,8 +1,13 @@
 #!/bin/bash
 
+
+
+BASEDIR=$(dirname $(realpath "$0"))
+
+APPDIR=$(dirname $(dirname $(dirname $(realpath "$0"))))
 # update system
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y nodejs neovim ripgrep build-base wget gcc
+sudo apt update -y && sudo apt upgrade -y
+sudo apt install -y nodejs neovim ripgrep build-base wget gcc tmux
 # install zsh and oh-my-zsh
 sudo apt install zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
@@ -11,9 +16,12 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 sed -i 's/^ZSH_THEME=.*/ZSH_THEME=\"powerlevel10k\/powerlevel10k\"/g' ~/.zshrc
 
-# install nvim and tmuxconf
+
+# install nvim and config files
 sudo snap install nvim --classic
-cp -R ../dotfiles/nvim ~/.config/
-cp ../dotfiles/.tmux.conf ~/
-# Install rust
-curl https://sh.rustup.rs -sSf | sh -s -- -y
+cp -R $APPDIR/dotfiles/nvim ~/.config/nvim/
+cp $APPDIR/dotfiles/.tmux.conf ~/
+cp $APPDIR/dotfiles/.zshrc ~/
+# install fzf
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install --all
