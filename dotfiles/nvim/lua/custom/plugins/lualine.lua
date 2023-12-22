@@ -1,10 +1,10 @@
 local diagnostics = {
-	"diagnostics",
-	sources = { "nvim_diagnostic" },
-	sections = { "error", "warn" },
-	colored = true,
-	update_in_insert = false,
-	always_visible = true,
+    "diagnostics",
+    sources = { "nvim_diagnostic" },
+    sections = { "error", "warn" },
+    colored = true,
+    update_in_insert = false,
+    always_visible = true,
 }
 
 local filename = {
@@ -24,12 +24,22 @@ return {
             section_separators = '',
         },
         sections = {
-            lualine_a = {'mode'},
-            lualine_b = {'branch', 'diff', diagnostics},
-            lualine_c = {filename, 'filesize'},
-            lualine_x = {'encoding', 'fileformat', 'filetype'},
-            lualine_y = {'progress'},
-            lualine_z = {'location', 'searchcount', "time"}
+            lualine_a = { 'mode' },
+            lualine_b = { 'branch', 'diff', diagnostics },
+            lualine_c = { filename, 'filesize' },
+            lualine_x = { 'encoding', 'fileformat', 'filetype' },
+            lualine_y = { 'progress' },
+            lualine_z = { 'location', 'searchcount', "time" }
         },
-    },  
+        tabline = {
+            lualine_a = {
+                {
+                    "buffers",
+                    right_padding = 2,
+                    symbols = { alternate_file = "" },
+                },
+            },
+        },
+    },
 }
+

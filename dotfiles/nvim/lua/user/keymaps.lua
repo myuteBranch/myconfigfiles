@@ -44,7 +44,7 @@ keymap("n", "<A-j>", ":m .+1<CR>==", opts)
 keymap("n", "<A-k>", ":m .-2<CR>==", opts)
 
 -- Insert --
--- Press jk fast to exit insert mode 
+-- Press jk fast to exit insert mode
 keymap("i", "jk", "<ESC>", opts)
 keymap("i", "kj", "<ESC>", opts)
 
@@ -74,6 +74,12 @@ keymap("x", "<A-k>", ":m '<-2<CR>gv=gv", opts)
 --
 
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+-- Git --
+vim.keymap.set("n", "<leader>gl", "<cmd>0Gclog<CR>", { desc = "File history" })
+vim.keymap.set("n", "<leader>gd",
+  "<cmd>lua require('user.diff')()<CR>",
+  { desc = "Diff With" }
+)
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -89,3 +95,4 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
