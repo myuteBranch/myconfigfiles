@@ -42,6 +42,7 @@ P.S. You can delete this when you're done too. It's your config now :)
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 require("user.options")
 require("user.keymaps")
+require("user.auto_cmds")
 
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
@@ -74,8 +75,8 @@ require('lazy').setup({
   'tpope/vim-sleuth',
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
-  
+  { 'folke/which-key.nvim',  opts = {} },
+
   {
     -- Theme inspired by Atom
     'navarasu/onedark.nvim',

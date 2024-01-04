@@ -19,6 +19,9 @@ vim.g.maplocalleader = " "
 --   command_mode = "c",
 
 -- Normal --
+-- Buffer
+keymap("n", "<leader>Q", ":bd<CR>", { noremap = true, silent = true, desc = "Close Current Buffer" })
+
 -- Better window navigation
 keymap("n", "<leader>pv", vim.cmd.Ex, opts)
 keymap("n", "<C-h>", "<C-w>h", opts)
@@ -95,4 +98,3 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
-
