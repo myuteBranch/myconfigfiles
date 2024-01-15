@@ -78,13 +78,13 @@
   remote_user: myu
   tasks:
     - name: install nvim
-      tags: nvim
+      tags: nvim,snap
       become: true
       snap:
         name: nvim
         classic: yes
     - name: copy nvim config
-      tags: nvim
+      tags: nvim,copy
       copy:
         src: ../dotfiles/nvim
         dest: ~/.config/
