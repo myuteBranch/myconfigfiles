@@ -7,7 +7,7 @@ BASEDIR=$(dirname $(realpath "$0"))
 APPDIR=$(dirname $(dirname $(dirname $(realpath "$0"))))
 # update system
 sudo apt update -y && sudo apt upgrade -y
-sudo apt install -y nodejs neovim ripgrep build-base wget gcc tmux
+sudo apt install -y nodejs ripgrep wget gcc tmux
 
 # install zsh and oh-my-zsh
 sudo apt install zsh

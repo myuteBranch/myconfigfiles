@@ -1,0 +1,94 @@
+---
+- name: install all tools
+  hosts: all
+  become: true
+  remote_user: myu
+  tasks:
+    - name: update server
+      tags: always
+      apt:
+        upgrade: yes
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: install tools
+      tags: tools,git,vim
+      apt:
+        name: git,nodejs,ripgrep,wget,gcc,tmux
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+- name: Install ZSH + oh-my-zsh + powerlevel10k
+  hosts: all
+  remote_user: myu
+  tasks:
+    - name: install zsh
+      tags: zsh
+      apt:
+        name: zsh
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+    - name: check if oh-myzsh is installed
+      tags : zsh
+      stat:
+        path: ~/.oh-my-zsh
+      register: omz
+
+    - name: install oh-my-zsh
+      tags: zsh
+      ansible.builtin.shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+      when: not omz.stat.exists
+
+    - name: check if powerlevel10k is installed
+      tags : zsh
+      stat:
+        path: ~/.oh-my-zsh/custom/themes/powerlevel10k
+      register: p10k
+
+    - name: install powerlevel10k
+      tags: zsh,power
+      ansible.builtin.shell: git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+      when: not p10k.stat.exists
+
+    - name: Copy config files
+      tags: copy, zsh, power
+      copy: 
+        src: ../dotfiles/.zshrc
+        dest: ~/.zshrc
+
+- name: Install fzf
+  hosts: all
+  remote_user: myu
+  tasks:
+
+    - name: check if fzf is installed
+      tags : zsh
+      stat:
+        path: ~/.fzf
+      register: fzf
+
+    - name: install fzf
+      tags: zsh
+      ansible.builtin.shell:  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install --all
+      when: not fzf.stat.exists
+
+- name: Copy nvim config
+  hosts: all
+  remote_user: myu
+  tasks:
+    - name: install nvim
+      tags: nvim
+      become: true
+      snap:
+        name: nvim
+        classic: yes
+    - name: copy nvim config
+      tags: nvim
+      copy:
+        src: ../dotfiles/nvim
+        dest: ~/.config/
+        force: true
+
+
+
