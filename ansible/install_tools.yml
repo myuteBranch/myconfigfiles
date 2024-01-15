@@ -2,7 +2,6 @@
 - name: install all tools
   hosts: all
   become: true
-  remote_user: myu
   tasks:
     - name: update server
       tags: always
@@ -20,10 +19,10 @@
 
 - name: Install ZSH + oh-my-zsh + powerlevel10k
   hosts: all
-  remote_user: myu
   tasks:
     - name: install zsh
       tags: zsh
+      become: true
       apt:
         name: zsh
         state: latest
@@ -51,15 +50,9 @@
       ansible.builtin.shell: git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
       when: not p10k.stat.exists
 
-    - name: Copy config files
-      tags: copy, zsh, power
-      copy: 
-        src: ../dotfiles/.zshrc
-        dest: ~/.zshrc
 
 - name: Install fzf
   hosts: all
-  remote_user: myu
   tasks:
 
     - name: check if fzf is installed
@@ -73,9 +66,9 @@
       ansible.builtin.shell:  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install --all
       when: not fzf.stat.exists
 
-- name: Copy nvim config
+
+- name: Install nvim snap
   hosts: all
-  remote_user: myu
   tasks:
     - name: install nvim
       tags: nvim,snap
@@ -83,12 +76,3 @@
       snap:
         name: nvim
         classic: yes
-    - name: copy nvim config
-      tags: nvim,copy
-      copy:
-        src: ../dotfiles/nvim
-        dest: ~/.config/
-        force: true
-
-
-

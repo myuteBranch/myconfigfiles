@@ -1,0 +1,19 @@
+- name: Copy .zshrc
+  hosts: all
+  tasks:
+
+    - name: Copy config files
+      tags: copy, zsh, power
+      copy: 
+        src: ../dotfiles/.zshrc
+        dest: ~/.zshrc
+
+- name: Copy nvim config
+  hosts: all
+  tasks:
+    - name: copy nvim config
+      tags: nvim,copy
+      copy:
+        src: ../dotfiles/nvim
+        dest: ~/.config/
+        force: true
