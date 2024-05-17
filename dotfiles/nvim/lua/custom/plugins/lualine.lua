@@ -41,7 +41,7 @@ return {
     opts = {
         options = {
             icons_enabled = false,
-            theme = 'nightfly',
+            theme = 'gruvbox-material',
             component_separators = '|',
             section_separators = '',
         },

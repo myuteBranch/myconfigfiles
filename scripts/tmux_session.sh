@@ -11,7 +11,7 @@ tmux send-keys -t $project:$window "nvim ." C-m
 
 window=2
 tmux new-window -t $project:$window -n 'term' -c $path
-tmux send-keys -t $project:$window "ls -ltra" C-m
+tmux send-keys -t $project:$window "ls -lra" C-m
 
 window=3
 tmux new-window -t $project:$window -n 'git' -c $path
