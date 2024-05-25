@@ -121,6 +121,7 @@ fif() {
 }
 # setup eza
 if command -v eza > /dev/null; then
-  alias l='eza -la'
+  alias l='eza -la --icons'
+  alias lt='eza -la -T --level=2 --icons '
   alias ls='eza'
 fi
