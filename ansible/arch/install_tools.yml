@@ -1,0 +1,77 @@
+---
+- name: install all tools
+  hosts: all
+  become: true
+  tasks:
+    - name: update server
+      tags: always
+      community.general.pacman:
+        upgrade: yes
+        update_cache: yes
+
+    - name: install tools
+      tags: tools,git,vim
+      community.general.pacman:
+        name: git,ripgrep,wget,gcc,tmux,neovim,unzip
+        state: latest
+
+    - name: install i3wm tools
+      tags: i3,i3lock,picom,dmenu
+      community.general.pacman:
+        name: i3blocks,i3lock,picom,dmenu,lxappearance,feh,ttf-font-awesome,arandr
+        state: latest
+
+    - name: install extra
+      tags: firefox,chrome,nwapplet
+      community.general.pacman:
+        name: firefox,chromium,webkit2gtk,network-manager-applet,wpa_supplicant,wireless_tools
+        state: latest
+
+- name: Install rust
+  hosts: all
+  tasks:
+    - name: install rust
+      tags: rust
+      ansible.builtin.shell: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+    - name: install alacritty
+      tags: rust
+      ansible.builtin.shell: ~/.cargo/bin/cargo install alacritty
+
+    - name: install eza
+      tags: rust
+      ansible.builtin.shell: ~/.cargo/bin/cargo install eza
+
+- name: Install starship + fish
+  hosts: all
+  tasks:
+    - name: install fish
+      tags: fish
+      become: true
+      community.general.pacman:
+        name: starship,fish
+        state: latest
+
+    - name: set shell
+      tags: fish
+      become: true
+      user:
+        name: "myu"
+        shell: /usr/bin/fish
+
+- name: Install fzf
+  hosts: all
+  tasks:
+
+    - name: check if fzf is installed
+      tags : zsh
+      stat:
+        path: ~/.fzf
+      register: fzf
+
+    - name: install fzf
+      tags: zsh
+      ansible.builtin.shell:  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install --all
+      when: not fzf.stat.exists
+
+

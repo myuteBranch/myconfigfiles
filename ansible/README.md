@@ -12,5 +12,7 @@ ansible all --user myu -m apt -a name=git --become --ask-become-pass
 ansible-playbook --ask-become-pass install_tools.yml
 # run playbook on local
 ansible-playbook --connection=local --inventory 127.0.0.1, --ask-become-pass playbook.yml
+# run on specific host
+ansible-playbook  --user myu --inventory 10.0.0.35, --ask-become-pass ansible/arch/install_tools.yml
 ```
 
