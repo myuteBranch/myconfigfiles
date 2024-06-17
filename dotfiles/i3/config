@@ -152,6 +152,10 @@ bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
+# move apps to workspace
+bindsym $mod+Ctrl+greater move workspace to output right
+bindsym $mod+Ctrl+less move workspace to output left
+
 # resize window (you can also use the mouse for that)
 mode "resize" {
         # These bindings trigger as soon as you enter the resize mode
@@ -204,8 +208,13 @@ bar {
 }
 # lock screen
 bindsym $mod+shift+x exec (i3lock --color "$bg-color" & sleep 5 && xset dpms force off)
+# suspend screen
+bindsym $mod+Ctrl+x exec systemctl suspend
+# switch keybeard layouts
+bindsym $mod+Ctrl+d exec setxkbmap us -v dvorak
+bindsym $mod+Ctrl+q exec setxkbmap us
 
 # wallpaper
-exec compton
+exec picom -b --inactive-opacity=1
 exec_always feh --bg-scale /home/myuu/src/wallpapers/backpacker.jpg
 
