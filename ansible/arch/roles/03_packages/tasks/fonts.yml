@@ -1,0 +1,19 @@
+---
+- name: ensure fonts directory
+  file:
+    path: "/usr/share/fonts"
+    state: directory
+
+- name: Hack exists
+  shell: "ls /usr/share/fonts/HackNerdFont*"
+  register: hack_exists
+  ignore_errors: yes
+  become: true
+
+- name: Download Hack
+  when: hack_exists is failed
+  become: true
+  ansible.builtin.unarchive:
+    src: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip
+    dest: "/usr/share/fonts/"
+    remote_src: yes
