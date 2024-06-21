@@ -35,6 +35,7 @@ packages:
   - neovim
   - unzip
   - i3blocks
+  - bc
   - i3lock
   - picom
   - dmenu
