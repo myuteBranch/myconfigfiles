@@ -51,6 +51,7 @@ packages:
   - network-manager-applet
   - wpa_supplicant
   - wireless_tools
+  - nodejs
 
 aur_packages:
   - zoom

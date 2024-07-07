@@ -3,8 +3,17 @@
   community.general.pacman:
     name:
       - pacman-contrib
+      - xdg-user-dirs
+      - xdg-desktop-portal
     state: present
   become: true
+
+- name: Start systemd service - xdg-user-dirs-update.service
+  ansible.builtin.systemd:
+    name: xdg-user-dirs-update.service
+    state: started
+    enabled: yes
+    scope: user
 
 - name: Start systemd service - paccache.timer
   ansible.builtin.systemd:
