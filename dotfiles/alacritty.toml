@@ -1,61 +1,50 @@
+colors.draw_bold_text_with_bright_colors = true
 
-[[colors.indexed_colors]]
-color = "0xcb4b16"
-index = 16
+# Cyberpunk-Neon colours
+[colors.primary]
+background = '0x000b1e'
+foreground = '0x0abdc6'
 
-[[colors.indexed_colors]]
-color = "0xd33682"
-index = 17
-
-[[colors.indexed_colors]]
-color = "0x073642"
-index = 18
-
-[[colors.indexed_colors]]
-color = "0x586e75"
-index = 19
-
-[[colors.indexed_colors]]
-color = "0x839496"
-index = 20
-
-[[colors.indexed_colors]]
-color = "0xeee8d5"
-index = 21
-
-[colors.bright]
-black = "0x657b83"
-blue = "0x268bd2"
-cyan = "0x2aa198"
-green = "0x859900"
-magenta = "0x6c71c4"
-red = "0xdc322f"
-white = "0xfdf6e3"
-yellow = "0xb58900"
-
-[colors.cursor]
-cursor = "0x93a1a1"
-text = "0x002b36"
+# Uncomment the following block if you want to specify cursor colors
+# [colors.cursor]
+# text = '0x2e2e2d'
+# cursor = '0xffffff'
 
 [colors.normal]
-black = "0x002b36"
-blue = "0x268bd2"
-cyan = "0x2aa198"
-green = "0x859900"
-magenta = "0x6c71c4"
-red = "0xdc322f"
-white = "0x93a1a1"
-yellow = "0xb58900"
+black = '0x123e7c'
+red = '0xff0000'
+green = '0xd300c4'
+yellow = '0xf57800'
+blue = '0x123e7c'
+magenta = '0x711c91'
+cyan = '0x0abdc6'
+white = '0xd7d7d5'
 
-[colors.primary]
-background = "0x002b36"
-foreground = "0x93a1a1"
+[colors.bright]
+black = '0x1c61c2'
+red = '0xff0000'
+green = '0xd300c4'
+yellow = '0xf57800'
+blue = '0x00ff00'
+magenta = '0x711c91'
+cyan = '0x0abdc6'
+white = '0xd7d7d5'
+
+[colors.dim]
+black = '0x1c61c2'
+red = '0xff0000'
+green = '0xd300c4'
+yellow = '0xf57800'
+blue = '0x123e7c'
+magenta = '0x711c91'
+cyan = '0x0abdc6'
+white = '0xd7d7d5'
 
 [env]
 TERM = "xterm-256color"
 
 [font]
-size = 12.0
+size = 10.0
 
 [font.bold]
 family = "Hack Nerd Font"
@@ -164,6 +153,7 @@ history = 5000
 
 [window]
 title = "Alacritty"
+opacity = 0.8
 
 [window.class]
 general = "Alacritty"
