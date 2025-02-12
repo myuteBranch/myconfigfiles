@@ -1,0 +1,12 @@
+[user]
+name = "myuteBranch"
+email = "myutexlock@pm.me"
+
+[ui]
+editor = "nvim"
+default-command = "log"
+diff.format = "git"
+diff.tool = ["difft", "--color=always", "$left", "$right"]
+
+[revsets]
+log = 'present(@) | ancestors(immutable_heads().., 5) | present(trunk())'
