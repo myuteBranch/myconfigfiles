@@ -1,0 +1,35 @@
+"" -- Suggested options --
+" Show a few lines of context around the cursor. Note that this makes the
+" text scroll if you mouse-click near the start or end of the window.
+set scrolloff=5
+
+" Do incremental searching.
+set incsearch
+set surround
+set ReplaceWithRegister
+set clipboard+=unnamed
+set peekaboo
+set highlightedyank
+
+let mapleader=" "
+" Motions
+nmap H <Action>(PreviousTab)
+nmap L <Action>(NextTab)
+
+" move line up or down
+vmap J <Action>(MoveLineDown)
+vmap K <Action>(MoveLineUp)
+
+" code interactions
+map <leader>gc <Action>(CommentByLineComment)
+vnoremap < <gv^
+vnoremap > >gv^
+
+nmap <leader>cd <Action>(ShowHoverInfo)
+nmap <leader>ce <Action>(ShowErrorDescription)
+nmap ]e <Action>(GotoNextError)
+nmap [e <Action>(GotoPreviousError)
+nmap <leader>sg <Action>(SearchEverywhere)
+
+set nerdtree
+nmap <leader>e :NERDTreeToggle<CR>
