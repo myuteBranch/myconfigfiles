@@ -9,6 +9,8 @@ set clipboard=unnamedplus " Use system clipboard
 vnoremap J :m '>+1<CR>gv=gv " Move selected lines down with Alt+J
 vnoremap K :m '<-2<CR>gv=gv " Move selected lines up with Alt+K
 vnoremap p "_dP " Paste without overriding the yank register
+vnoremap < <gv
+vnoremap > >gv
 
 " VSCode specific keymaps
 " Use <leader> key as space
