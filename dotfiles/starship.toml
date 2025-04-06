@@ -18,8 +18,14 @@ symbol = " "
 
 [directory]
 read_only = " 󰌾"
+truncation_length = 5
+truncate_to_repo = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+read_only_style = "red"
+style = "bold italic blue"
 
 [docker_context]
+format = "[$context](blue bold)"
 symbol = " "
 
 [elixir]
@@ -54,6 +60,10 @@ symbol = " "
 
 [hostname]
 ssh_symbol = " "
+ssh_only = false
+format =  "[$hostname](bold #ee00ff) [❯](bold green) "
+trim_at = ".companyname.com"
+disabled = false
 
 [java]
 symbol = " "
@@ -162,3 +172,25 @@ symbol = " "
 
 [zig]
 symbol = " "
+
+# Hide the username. The username will only show in certain scenarios
+[username]
+disabled = false
+
+[cmd_duration]
+min_time = 4
+show_milliseconds = false
+disabled = false
+format = "[ $duration](bold yellow)"
+style = "bold italic blue"
+
+[kubernetes]
+format = 'on [☸ $context \($namespace\)](dimmed green) '
+disabled = false
+[kubernetes.context_aliases]
+"dev.local.cluster.k8s" = "dev"
+".*/openshift-cluster/.*" = "openshift"
+"gke_.*_(?P<cluster>[\\w-]+)" = "gke-$cluster"
+
+[helm]
+format = "[⎈ $version](bold white) "
