@@ -1,3 +1,0 @@
-#!/bin/bash
-
-setxkbmap -query | awk '/variant/{print $2}'| grep . || echo 'US'

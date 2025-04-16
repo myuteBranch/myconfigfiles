@@ -1,0 +1,98 @@
+/* ~/.config/rofi/config.rasi */
+
+configuration {
+    modi: "drun,run,window"; /* Modes: applications, run command, switch window */
+    icon-theme: "Papirus";   /* Or your preferred icon theme */
+    show-icons: true;
+    terminal: "i3-sensible-terminal";
+    drun-display-format: "{icon} {name}";
+    location: 0; /* Center */
+    disable-history: false;
+    hide-scrollbar: true;
+    display-drun: " Apps"; /* Magnifying glass icon */
+    display-run: " Run";   /* Terminal icon */
+    display-window: " Win"; /* Window icon */
+    sidebar-mode: true;
+    
+     // --- Custom Keybindings ---
+    kb-row-down: "Down,Control+n"; // Add Ctrl+j and Ctrl+n for down
+    kb-row-up: "Up,Control+p";     // Add Ctrl+k and Ctrl+p for up
+
+    // You can override other defaults here too...
+    kb-mode-complete: "Control+Shift+Right";
+    kb-mode-next: "Shift+Right,Control+l";
+    // kb-mode-previous: "Shift+Left,Control+h";
+}
+
+@theme "/usr/share/rofi/themes/gruvbox-dark.rasi" /* Or choose another pre-installed theme */
+/* You can find themes in /usr/share/rofi/themes/ */
+/* Or create your own theme here */
+
+/* Example of simple theme settings if you don't use @theme */
+/*
+window {
+    background-color: #282828;
+    border:           2px;
+    border-color:     #83a598;
+    border-radius:    0px;
+    width:            50%;
+    padding:          10px;
+}
+mainbox {
+    children: [ "inputbar", "listview" ];
+    spacing: 10px;
+    padding: 10px;
+}
+inputbar {
+    children: [ "prompt", "entry" ];
+    background-color: #3c3836;
+    text-color:       #ebdbb2;
+    padding:          5px;
+    border-radius:    0px;
+}
+prompt {
+    background-color: inherit;
+    text-color:       inherit;
+    padding:          0px 5px;
+}
+entry {
+    background-color: inherit;
+    text-color:       inherit;
+    placeholder:      "Type to search...";
+    placeholder-color: #928374;
+}
+listview {
+    columns:          1;
+    lines:            8;
+    cycle:            true;
+    dynamic:          true;
+    layout:           vertical;
+    background-color: transparent;
+    text-color:       #ebdbb2;
+    spacing:          5px;
+}
+element {
+    padding:          5px;
+    border-radius:    0px;
+}
+element-icon {
+    size: 1.5em;
+    padding: 0px 10px 0px 0px;
+}
+element-text {
+    vertical-align: 0.5;
+}
+element normal.normal {
+    background-color: transparent;
+    text-color:       #ebdbb2;
+}
+element selected.normal {
+    background-color: #458588;
+    text-color:       #282828;
+}
+element alternate.normal {
+    background-color: transparent;
+    text-color:       #ebdbb2;
+}
+*/
+

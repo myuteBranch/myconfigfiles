@@ -10,4 +10,4 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install
 
 # link
-ln -s /home/myutex/src/myconfigfiles/dotfiles/fish /home/myutex/.config/fish
+ln -s $HOME/src/myconfigfiles/dotfiles/fish $HOME/.config/fish
