@@ -23,8 +23,6 @@ font pango:MesloLGS Nerd Font Mono Bold 10
 
 # layout and secrets
 exec --no-startup-id ~/.screenlayout/default.sh
-exec --no-startup-id eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,ssh,secrets)
-exec --no-startup-id /usr/bin/dbus-update-activation-environment --systemd --all
 
 # --- Keybindings ---
 # Start a terminal
@@ -181,7 +179,7 @@ for_window [window_type="menu"] floating enable
 exec --no-startup-id feh --bg-scale ~/Pictures/background.jpg
 
 # Start compositor (for transparency, etc.)
-exec --no-startup-id picom --config /dev/null & # Start with default settings initially
+exec --no-startup-id picom --config ~/.config/picom/picom.conf & # Start with default settings initially
 
 # Start notification daemon
 exec --no-startup-id dunst &
@@ -193,7 +191,7 @@ exec --no-startup-id nm-applet &
 exec --no-startup-id blueman-applet &
 
 # Start Polkit agent (important for permissions) - Pop!_OS might handle this differently,
-exec --no-startup-id /usr/lib/polkit-1/polkit-agent-helper-1 &
+exec --no-startup-id /usr/lib/polkit-kde-authentication-agent-1 &
 # but including one is often necessary. Check if /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 exists.
 # If not, you might need to install `polkit-gnome`.
 # exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
