@@ -1,0 +1,181 @@
+[
+  {
+    "output": "DP-1", // Monitor from [bar/main]
+    "layer": "top",
+    "position": "top",
+    "height": 24, // From bar height
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": [
+      "cpu",
+      "memory",
+      "disk",
+      "pulseaudio",
+      "network",
+      "custom/powermenu"
+    ],
+
+    "hyprland/workspaces": {
+      "format": "{id}", // Use {name} or {id} if you prefer numbers/names
+      "format-icons": {
+        "default": "", // Adjust icons as needed
+        "active": "",
+        "urgent": ""
+      },
+      "persistent_workspaces": {
+        "*": 5 // Example: Show at least 5 workspaces always
+      },
+      "all-outputs": false // Equivalent to pin-workspaces = true
+    },
+
+    "clock": {
+      "format": " {:%A, %d %B %Y %H:%M}", // Combined date/time format
+      "tooltip-format": "<big>{:%Y-%m-%d %H:%M:%S}</big>",
+      "format-alt": " {:%Y-%m-%d %H:%M:%S}" // Alt format on click/scroll
+    },
+
+    "cpu": {
+      "format": "CPU {usage: >2}%", // Right-align usage to 2 chars
+      "interval": 2
+    },
+
+    "memory": {
+      "format": "RAM {}%", // {} defaults to used percentage
+      "interval": 2
+    },
+
+    "disk": {
+      "path": "/",
+      "format": " {path}: {percentage_used}%",
+      "interval": 25
+    },
+
+    "pulseaudio": {
+      "format": "{icon} {volume}%",
+      "format-muted": " muted",
+      "format-icons": {
+        "default": ["", "", ""] // Icons for low, medium, high volume
+      },
+      "scroll-step": 5,
+      "on-click": "pavucontrol" // Launch volume control on click
+    },
+
+    "network": {
+      "interface": "eno1", // Your specified interface
+      "format-ethernet": " {bandwidthDownBytes}  {bandwidthUpBytes}", // Simplified like polybar
+      "format-disconnected": "⚠ Disconnected",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr} ",
+      "tooltip-format-disconnected": "Disconnected",
+      "interval": 3
+    },
+
+    "custom/bluetooth": {
+      "format": "{}", // Script output defines the text
+      "exec": "~/.config/waybar/scripts/bluetooth.sh", // Adjust path if needed
+      "return-type": "text", // Change to json if script outputs json
+      "interval": 2,
+      "on-click": "blueman-manager &"
+    },
+
+    "custom/powermenu": {
+      "format": "",
+      "tooltip": true,
+      "tooltip-format": "Power Menu",
+      "on-click": "~/.config/waybar/scripts/powermenu.sh &" // Adjust path if needed
+    }
+  },
+  {
+    "output": "HDMI-A-2", // Monitor from [bar/secondary]
+    "layer": "top",
+    "position": "top",
+    "height": 24,
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": [
+      "cpu",
+      "memory",
+      "disk",
+      "keyboard-state", // Replaces xkeyboard
+      "pulseaudio",
+      "network",
+      "tray", // Added tray module
+      "custom/powermenu"
+    ],
+
+    // Re-use module definitions from the first bar where applicable
+    // Or define them again if you want different settings per bar
+    "hyprland/workspaces": { // Same definition as above
+      "format": "{id}",
+      "format-icons": {
+        "default": "",
+        "active": "",
+        "urgent": ""
+      },
+      "persistent_workspaces": {
+        "*": 5
+      },
+      "all-outputs": false
+    },
+    "clock": { // Same definition as above
+      "format": " {:%A, %d %B %Y %H:%M}",
+      "tooltip-format": "<big>{:%Y-%m-%d %H:%M:%S}</big>",
+      "format-alt": " {:%Y-%m-%d %H:%M:%S}"
+    },
+    "cpu": { // Same definition as above
+      "format": "CPU {usage: >2}%",
+      "interval": 2
+    },
+    "memory": { // Same definition as above
+      "format": "RAM {}%",
+      "interval": 2
+    },
+    "disk": { // Same definition as above
+      "path": "/",
+      "format": " {path}: {percentage_used}%",
+      "interval": 25
+    },
+    "keyboard-state": {
+      "numlock": true,
+      "capslock": true,
+      "format": "{name}", // Show layout name like Polybar's %name%
+      "format-icons": {
+        "locked": "",
+        "unlocked": ""
+      }
+    },
+    "pulseaudio": { // Same definition as above
+      "format": "{icon} {volume}%",
+      "format-muted": " muted",
+      "format-icons": {
+        "default": ["", "", ""]
+      },
+      "scroll-step": 5,
+      "on-click": "pavucontrol"
+    },
+    "network": { // Same definition as above
+      "interface": "eno1",
+      "format-ethernet": " {bandwidthDownBytes}  {bandwidthUpBytes}",
+      "format-disconnected": "⚠ Disconnected",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr} ",
+      "tooltip-format-disconnected": "Disconnected",
+      "interval": 3
+    },
+    "custom/bluetooth": { // Same definition as above
+      "format": "{}",
+      "exec": "~/.config/waybar/scripts/bluetooth.sh",
+      "return-type": "text",
+      "interval": 2,
+      "on-click": "blueman-manager &"
+    },
+    "tray": {
+      "icon-size": 16,
+      "spacing": 5 // Equivalent to tray-padding
+    },
+    "custom/powermenu": { // Same definition as above
+      "format": "",
+      "tooltip": true,
+      "tooltip-format": "Power Menu",
+      "on-click": "~/.config/waybar/scripts/powermenu.sh &"
+    }
+  }
+]

@@ -23,6 +23,8 @@ font pango:MesloLGS Nerd Font Mono Bold 10
 
 # layout and secrets
 exec --no-startup-id ~/.screenlayout/default.sh
+exec --no-startup-id xset -dpms
+exec --no-startup-id xset s off
 
 # --- Keybindings ---
 # Start a terminal
@@ -30,6 +32,9 @@ bindsym $mod+Return exec $term
 
 # Kill focused window
 bindsym $mod+Shift+q kill
+
+# suspend system
+bindsym $mod+Shift+x exec systemctl suspend
 
 # Start application launcher (Rofi)
 bindsym $mod+space exec $menu

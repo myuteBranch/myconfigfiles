@@ -1,23 +1,13 @@
 function update_all
-    # title " - Fetching New Mirror List"
-    # fetch new mirrors
-
-    sudo pacman -Syy
-
     #title "Updating Official Packages"
-    sudo pacman -Su --disable-download-timeout
+    sudo pacman -Syu
 
     if test (command -v paru)
         #title "Updating AUR Packages (paru)"
-        paru -Su --disable-download-timeout
+        paru -Syu
     else if test (command -v yay)
         #title "Updating AUR Packages (yay)"
-        yay -Su --disable-download-timeout
-    end
-
-    if test (command -v pkgfile)
-        #title "Updating Repo Files Lists"
-        sudo pkgfile -u
+        yay -Syu
     end
 
     #title "Updating Fish Completions"

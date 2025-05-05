@@ -2,12 +2,14 @@
 set -eux
 
 # Install base packages
-sudo pacman -S --needed git base-devel xclip arandr dunst lxappearance feh picom polybar rofi alacritty dolphin bat pacman-contrib reflector
+sudo pacman -S --needed git base-devel xclip arandr dunst lxappearance feh picom polybar rofi alacritty dolphin bat pacman-contrib reflector gnomes-themes-extra
+
 sudo systemctl enable paccache.timer
 sudo systemctl start paccache.timer
 
 sudo systemctl enable reflector.service
 sudo systemctl start reflector.service
+gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 
 # install yay
 mkdir src
