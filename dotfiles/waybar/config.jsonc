@@ -16,7 +16,7 @@
     ],
 
     "hyprland/workspaces": {
-      "format": "{id}", // Use {name} or {id} if you prefer numbers/names
+      "format": "{id}: {icon}", // Use {name} or {id} if you prefer numbers/names
       "format-icons": {
         "default": "", // Adjust icons as needed
         "active": "",
@@ -105,7 +105,7 @@
     // Re-use module definitions from the first bar where applicable
     // Or define them again if you want different settings per bar
     "hyprland/workspaces": { // Same definition as above
-      "format": "{id}",
+      "format": "{id}: {icon}",
       "format-icons": {
         "default": "",
         "active": "",
