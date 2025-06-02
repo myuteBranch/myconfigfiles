@@ -10,4 +10,5 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install
 
 # link
+rm -rf $HOME/.config/fish
 ln -s $HOME/src/myconfigfiles/dotfiles/fish $HOME/.config/fish

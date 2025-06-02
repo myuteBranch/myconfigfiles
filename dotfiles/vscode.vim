@@ -21,3 +21,4 @@ nnoremap <leader>, :call VSCodeNotify('workbench.action.quickOpen')<CR>
 nnoremap <leader>p :call VSCodeNotify('workbench.action.showCommands')<CR>
 nnoremap L :call VSCodeNotify('workbench.action.nextEditor')<CR>
 nnoremap H :call VSCodeNotify('workbench.action.previousEditor')<CR>
+nnoremap gr :call VSCodeNotify('editor.action.goToReferences')<CR>
