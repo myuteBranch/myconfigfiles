@@ -1,0 +1,45 @@
+# ansible-arch-dev/roles/golang/tasks/main.yml
+- name: Check if Go is already installed
+  ansible.builtin.stat:
+    path: "{{ go_root }}/bin/go"
+  register: go_binary
+
+- name: Download Go tarball
+  ansible.builtin.get_url:
+    url: "{{ go_download_url_base }}{{ go_tarball }}"
+    dest: "/tmp/{{ go_tarball }}"
+    mode: '0644'
+  when: not go_binary.stat.exists
+  become: yes
+
+- name: Remove previous Go installation if any (to ensure clean install)
+  ansible.builtin.file:
+    path: "{{ go_root }}"
+    state: absent
+  when: not go_binary.stat.exists # Only if we are about to install
+  become: yes
+
+- name: Extract Go tarball
+  ansible.builtin.unarchive:
+    src: "/tmp/{{ go_tarball }}"
+    dest: "{{ go_install_dir }}"
+    remote_src: yes
+    creates: "{{ go_root }}/bin/go" # Idempotency
+  when: not go_binary.stat.exists
+  become: yes
+
+- name: Create user's Go workspace directory (GOPATH)
+  ansible.builtin.file:
+    path: "/home/{{ dev_username }}/go/bin" # Create bin subdir too
+    state: directory
+    owner: "{{ dev_username }}"
+    group: "{{ dev_username }}" # Or a common dev group
+    mode: '0755'
+  become: yes # May need to create /home/dev_username/go first
+  when: dev_username is defined
+
+- name: Clean up Go tarball
+  ansible.builtin.file:
+    path: "/tmp/{{ go_tarball }}"
+    state: absent
+  become: yes

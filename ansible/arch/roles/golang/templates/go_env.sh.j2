@@ -1,0 +1,4 @@
+# ansible-arch-dev/roles/golang/templates/go_env.sh.j2
+export GOROOT={{ go_root }}
+export GOPATH="$HOME/go" # User-specific Go workspace
+export PATH="$PATH:{{ go_root }}/bin:$HOME/go/bin"

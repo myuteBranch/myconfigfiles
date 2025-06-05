@@ -1,0 +1,44 @@
+dev_user_shell: /bin/fish
+dev_user_groups: "wheel,docker,networkmanager"
+
+# ansible-arch-dev/roles/custom_configs/defaults/main.yml
+custom_config_files:
+  - src: "{{dotfiles_path}}/.tmux.conf"
+    dest: /home/{{dev_username}}/.tmux.conf
+    owner: myute
+    group: myute
+    mode: "0775"
+  - src: "{{dotfiles_path}}/fish/"
+    dest: /home/{{dev_username}}/.config/fish/
+    owner: myute
+    group: myute
+    mode: "0775"
+  - src: "{{dotfiles_path}}/starship.toml"
+    dest: /home/{{dev_username}}/.config/starship.toml
+    owner: myute
+    group: myute
+    mode: "0775"
+  # Example:
+  # - src: my_app.conf  # Located in roles/custom_configs/files/my_app.conf
+  #   dest: /etc/my_app/my_app.conf
+  #   owner: myappuser
+  #   group: myappgroup
+  #   mode: "0640"
+  #   notify_handler: "Restart my_app service" # Name of the handler
+  #
+  # - src: sshd_config_custom # Located in roles/custom_configs/files/sshd_config_custom
+  #   dest: /etc/ssh/sshd_config
+  #   owner: root
+  #   group: root
+  #   mode: "0600"
+  #   validate: "sshd -t -f %s" # Validate sshd config before applying
+  #   notify_handler: "Restart sshd"
+
+custom_template_files: []
+  # Example:
+  # - src: database.yml.j2 # Located in roles/custom_configs/templates/database.yml.j2
+  #   dest: /srv/my_rails_app/shared/config/database.yml
+  #   owner: "{{ app_user | default('deploy') }}"
+  #   group: "{{ app_group | default('deploy') }}"
+  #   mode: "0600"
+  #   notify_handler: "Restart unicorn" # Or whatever app server

@@ -1,0 +1,3 @@
+# ansible-arch-dev/requirements.yml
+collections:
+  - community.general

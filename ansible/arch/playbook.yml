@@ -1,0 +1,22 @@
+# ansible-arch-dev/playbook.yml
+---
+- name: Configure Arch Linux development server
+  hosts: local_machine
+  gather_facts: true
+  become: yes
+
+  vars:
+    dev_username: "myute"
+    dotfiles_path: "/home/myute/src/myconfigfiles/dotfiles"
+
+  roles:
+    - role: common
+      tags: common
+    - role: dev_user
+      tags: user
+      when: dev_username is defined
+    - role: rust
+      tags: rust
+      when: dev_username is defined
+    - role: golang
+      tags: golang

@@ -1,0 +1,31 @@
+- name: Ensure system is up-to-date
+  community.general.pacman:
+    update_cache: yes
+    upgrade: yes
+  become: yes
+
+- name: Install common development packages
+  community.general.pacman:
+    name: "{{ common_packages }}"
+    state: present
+  become: yes
+  
+- name: Enable service paccache and ensure it is not masked
+  ansible.builtin.systemd_service:
+    name: paccache.timer 
+    enabled: true
+    
+- name: Make sure paccache service unit is running
+  ansible.builtin.systemd_service:
+    name: paccache.timer 
+    state: started
+
+- name: Enable service reflector and ensure it is not masked
+  ansible.builtin.systemd_service:
+    name: reflector
+    enabled: true
+
+- name: Make sure reflector service unit is running
+  ansible.builtin.systemd_service:
+    name: reflector 
+    state: started

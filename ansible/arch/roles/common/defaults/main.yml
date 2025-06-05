@@ -1,0 +1,18 @@
+common_packages:
+  - base-devel
+  - git
+  - vim
+  - curl
+  - wget
+  - openssh
+  - neovim
+  - pacman-contrib
+  - reflector
+  - fish
+  - fzf
+  - starship
+  - fastfetch
+  - bat
+  - eza
+  - jujutsu
+  - difftastic

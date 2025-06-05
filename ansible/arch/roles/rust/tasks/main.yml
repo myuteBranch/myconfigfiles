@@ -1,0 +1,33 @@
+# ansible-arch-dev/roles/rust/tasks/main.yml
+- name: Check if rustup is already installed for the user
+  ansible.builtin.stat:
+    path: "/home/{{ dev_username }}/.cargo/bin/rustc"
+  register: rustc_binary
+  become: yes # To check path in another user's home
+  become_user: "{{ dev_username }}"
+  when: dev_username is defined
+
+- name: Download rustup-init.sh
+  ansible.builtin.get_url:
+    url: "{{ rustup_init_url }}"
+    dest: "/tmp/rustup-init.sh"
+    mode: '0755'
+  when: dev_username is defined and not rustc_binary.stat.exists
+
+- name: Install Rust via rustup for the development user
+  ansible.builtin.command: # Using command as shell might interpret ~ incorrectly
+    cmd: /tmp/rustup-init.sh -y --no-modify-path
+    creates: "/home/{{ dev_username }}/.cargo/bin/rustc" # Idempotency
+  become: yes
+  become_user: "{{ dev_username }}" # Run as the target user
+  environment: # rustup needs these for non-interactive install
+    USER: "{{ dev_username }}"
+    HOME: "/home/{{ dev_username }}"
+  when: dev_username is defined and not rustc_binary.stat.exists
+  changed_when: true # Assume it changes if it runs
+
+- name: Clean up rustup-init.sh
+  ansible.builtin.file:
+    path: "/tmp/rustup-init.sh"
+    state: absent
+  when: dev_username is defined and not rustc_binary.stat.exists

@@ -1,0 +1,62 @@
+- name: Ensure development user group exists (e.g., 'wheel' for sudo)
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ dev_user_groups.split(',') if dev_user_groups is string else dev_user_groups }}"
+  become: yes
+
+- name: Create development user
+  ansible.builtin.user:
+    name: "{{ dev_username }}"
+    shell: "{{ dev_user_shell }}"
+    groups: "{{ dev_user_groups }}"
+    append: yes
+    create_home: yes
+    state: present
+  become: yes
+  when: dev_username is defined
+  
+- name: Ensure parent directories exist for config files
+  ansible.builtin.file:
+    path: "{{ item.dest | dirname }}" # Gets the directory part of the destination
+    state: directory
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.dir_mode | default('0755') }}"
+  loop: "{{ custom_config_files + custom_template_files }}" # Combine both lists
+  loop_control:
+    label: "{{ item.dest | dirname }}"
+  become: yes
+  when: item.dest is defined # Only run if dest is defined
+
+- name: Copy static configuration files
+  ansible.builtin.copy:
+    src: "{{ item.src }}"  # Path relative to roles/custom_configs/files/
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0644') }}"
+    backup: "{{ item.backup | default(true) }}" # Create a backup of the original
+    validate: "{{ item.validate | default(omit) }}" # e.g., 'visudo -cf %s' for sudoers
+  loop: "{{ custom_config_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  become: yes
+  notify: "{{ item.notify_handler | default(omit) }}" # Notify a handler if changed
+  when: item.src is defined and item.dest is defined
+
+- name: Deploy templated configuration files
+  ansible.builtin.template:
+    src: "{{ item.src }}"  # Path relative to roles/custom_configs/templates/
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0644') }}"
+    backup: "{{ item.backup | default(true) }}"
+    validate: "{{ item.validate | default(omit) }}"
+  loop: "{{ custom_template_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  become: yes
+  notify: "{{ item.notify_handler | default(omit) }}"
+  when: item.src is defined and item.dest is defined

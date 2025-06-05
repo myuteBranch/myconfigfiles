@@ -1,0 +1,5 @@
+# ansible-arch-dev/roles/rust/defaults/main.yml
+# dev_username is expected from inventory or higher level vars
+# rust_user: "{{ dev_username | default(ansible_user) }}" # User to install rust for
+rustup_init_url: "https://sh.rustup.rs"
+rust_profile_script_path: "/etc/profile.d/rust_env.sh"
