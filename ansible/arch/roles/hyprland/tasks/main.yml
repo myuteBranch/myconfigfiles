@@ -1,0 +1,40 @@
+- name: Ensure system is up-to-date
+  community.general.pacman:
+    update_cache: yes
+    upgrade: yes
+  become: yes
+
+- name: Install hyprland packages
+  community.general.pacman:
+    name: "{{ hyprland_packages }}"
+    state: present
+  become: yes
+
+- name: Ensure parent directories exist for hyprland config files
+  ansible.builtin.file:
+    path: "{{ item.dest | dirname }}"
+    state: directory
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.dir_mode | default('0755') }}"
+  loop: "{{ desktop_config_files }}"
+  loop_control:
+    label: "{{ item.dest | dirname }}"
+  become: yes
+  when: item.dest is defined
+
+- name: Copy static hyprland configuration files
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0644') }}"
+    backup: "{{ item.backup | default(true) }}"
+    validate: "{{ item.validate | default(omit) }}"
+  loop: "{{ desktop_config_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  become: yes
+  notify: "{{ item.notify_handler | default(omit) }}"
+  when: item.src is defined and item.dest is defined

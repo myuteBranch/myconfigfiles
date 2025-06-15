@@ -29,3 +29,55 @@
   ansible.builtin.systemd_service:
     name: reflector 
     state: started
+
+- name: Ensure git is installed
+  community.general.pacman:
+    name: git
+    state: present
+  register: git_install_result
+  until: git_install_result is success or 'target not found' not in git_install_result.msg
+  retries: 5
+  delay: 5
+
+- name: Ensure base-devel is installed
+  community.general.pacman:
+    name: base-devel
+    state: present
+  register: base_devel_install_result
+  until: base_devel_install_result is success or 'target not found' not in base_devel_install_result.msg
+  retries: 5
+  delay: 5
+
+- name: Check if yay is already installed
+  ansible.builtin.stat:
+    path: /usr/bin/yay
+  register: yay_binary
+
+- name: Clone yay repository if not installed
+  ansible.builtin.git:
+    repo: 'https://aur.archlinux.org/yay.git'
+    dest: /tmp/yay
+    clone: yes
+    update: no # We'll handle updates manually if needed
+  when: not yay_binary.stat.exists
+  become: yes
+  become_user: "{{ dev_username }}"
+  register: yay_repo_clone
+
+- name: Build and install yay
+  ansible.builtin.command: makepkg -si --noconfirm
+  args:
+    chdir: /tmp/yay
+  when: not yay_binary.stat.exists or yay_repo_clone.changed # Run if yay isn't there or repo was cloned
+  become: yes
+  become_user: "{{ dev_username }}"
+  register: yay_install_result
+  changed_when: "'installing yay' in yay_install_result.stdout or 'upgrading yay' in yay_install_result.stdout"
+
+- name: Clean up yay build directory
+  ansible.builtin.file:
+    path: /tmp/yay
+    state: absent
+  when: not yay_binary.stat.exists or yay_repo_clone.changed
+  become: yes
+  become_user: "{{ dev_username }}"

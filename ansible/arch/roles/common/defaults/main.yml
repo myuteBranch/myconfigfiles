@@ -16,3 +16,5 @@ common_packages:
   - eza
   - jujutsu
   - difftastic
+  - less
+  - btop

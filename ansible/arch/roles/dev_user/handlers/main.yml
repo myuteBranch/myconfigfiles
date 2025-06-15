@@ -1,0 +1,34 @@
+# ansible-arch-dev/roles/custom_configs/handlers/main.yml
+---
+# - name: Restart sshd
+#   ansible.builtin.service:
+#     name: sshd
+#     state: restarted
+#   become: yes
+
+# - name: Restart my_app service
+#   ansible.builtin.service:
+#     name: my_app # Replace with your actual service name
+#     state: restarted
+#   become: yes
+#   when: my_app_service_exists.stat.exists # Optional: check if service unit exists
+
+# Example check for service existence (can be put in tasks/main.yml before notify)
+# - name: Check if my_app service unit exists
+#   ansible.builtin.stat:
+#     path: /etc/systemd/system/my_app.service # Or appropriate path
+#   register: my_app_service_exists
+#   ignore_errors: yes # If the service might not be installed yet
+
+# - name: Restart nginx
+#   ansible.builtin.service:
+#     name: nginx
+#     state: restarted
+#   become: yes
+
+# - name: Restart unicorn # Example for a Rails app
+#   ansible.builtin.systemd: # Or ansible.builtin.service if not systemd
+#     name: unicorn # Or your app service name
+#     state: restarted
+#     daemon_reload: yes # If you also changed a systemd unit file
+#   become: yes

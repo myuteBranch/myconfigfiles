@@ -13,6 +13,11 @@ custom_config_files:
     owner: myute
     group: myute
     mode: "0775"
+  - src: "{{dotfiles_path}}/jj/"
+    dest: /home/{{dev_username}}/.config/jj/
+    owner: myute
+    group: myute
+    mode: "0775"
   - src: "{{dotfiles_path}}/starship.toml"
     dest: /home/{{dev_username}}/.config/starship.toml
     owner: myute

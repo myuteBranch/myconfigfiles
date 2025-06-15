@@ -33,9 +33,9 @@
     path: "/home/{{ dev_username }}/go/bin" # Create bin subdir too
     state: directory
     owner: "{{ dev_username }}"
-    group: "{{ dev_username }}" # Or a common dev group
+    group: "{{ dev_username }}"
     mode: '0755'
-  become: yes # May need to create /home/dev_username/go first
+  become: yes
   when: dev_username is defined
 
 - name: Clean up Go tarball

@@ -1,0 +1,49 @@
+hyprland_packages:
+  - hyprland
+  - waybar
+  - rofi-wayland
+  - xdg-desktop-portal-hyprland
+  - qt5-wayland
+  - qt6-wayland
+  - pipewire
+  - wireplumber
+  - polkit-kde-agent
+  - wl-clipboard
+  - hyprlock
+  - swaybg
+  - dunst
+  - lxappearance
+  - gnome-themes-extra
+  - alacritty
+  - ttf-meslo-nerd
+  - ttf-jetbrains-mono
+  - arandr
+  - blueman
+  - nautilus
+
+desktop_config_files:
+  - src: "{{dotfiles_path}}/hypr/"
+    dest: /home/{{dev_username}}/.config/hypr/
+    owner: myute
+    group: myute
+    mode: "0775"
+  - src: "{{dotfiles_path}}/waybar/"
+    dest: /home/{{dev_username}}/.config/waybar/
+    owner: myute
+    group: myute
+    mode: "0775"
+  - src: "{{dotfiles_path}}/rofi/"
+    dest: /home/{{dev_username}}/.config/rofi/
+    owner: myute
+    group: myute
+    mode: "0775"
+  - src: "{{dotfiles_path}}/dunst/"
+    dest: /home/{{dev_username}}/.config/dunst/
+    owner: myute
+    group: myute
+    mode: "0775"
+  - src: "{{dotfiles_path}}/alacritty.toml"
+    dest: /home/{{dev_username}}/.config/alacritty/alacritty.toml
+    owner: myute
+    group: myute
+    mode: "0775"

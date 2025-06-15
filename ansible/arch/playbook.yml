@@ -20,3 +20,7 @@
       when: dev_username is defined
     - role: golang
       tags: golang
+      when: dev_username is defined
+    - role: hyprland
+      tags: hyprland
+      when: dev_username is defined
