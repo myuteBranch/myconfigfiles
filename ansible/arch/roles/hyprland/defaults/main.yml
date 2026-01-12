@@ -1,25 +1,39 @@
 hyprland_packages:
   - hyprland
+  - hyprland-preview-share-picker
+  - hyprlock
+  - hyprpicker
+  - hypridle
   - waybar
   - rofi-wayland
+  - xdg-desktop-portal
+  - xdg-desktop-portal-gtk
   - xdg-desktop-portal-hyprland
   - qt5-wayland
   - qt6-wayland
   - pipewire
+  - pipewire-alsa
+  - pipewire-pulse
+  - pipewire-jack
+  - pipewire-audio
   - wireplumber
-  - polkit-kde-agent
+  - polkit
+  - polkit-gnome
   - wl-clipboard
-  - hyprlock
-  - swaybg
   - dunst
   - lxappearance
-  - gnome-themes-extra
   - alacritty
   - ttf-meslo-nerd
   - ttf-jetbrains-mono
+  - ttf-cascadia-mono-nerd
   - arandr
-  - blueman
   - nautilus
+  - bluez
+  - bluez-libs
+  - bluetui
+  - swaybg
+  - swayosd
+  - dbus
 
 desktop_config_files:
   - src: "{{dotfiles_path}}/hypr/"

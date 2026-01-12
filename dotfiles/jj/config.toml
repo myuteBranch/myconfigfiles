@@ -10,3 +10,6 @@ diff-formatter = ["difft", "--color=always", "$left", "$right"]
 
 [revsets]
 log = 'present(@) | ancestors(immutable_heads().., 5) | present(trunk())'
+
+[aliases]
+rebase-all = ["rebase", "-s", "(::trunk())+ & mutable()", "-d", "trunk()"]
