@@ -70,21 +70,27 @@ let
     dir="$HOME/Pictures/Screenshots"
     mkdir -p "$dir"
 
+    regioncb="󰹑 Screenshot Region to Clipboard"
     region="󰹑 Screenshot Region"
 
     chosen=$(
-      printf "%s\n" "$region" | ${pkgs.rofi}/bin/rofi \
+      printf "%s\n%s\n" "$regioncb" "$region" | ${pkgs.rofi}/bin/rofi \
         -dmenu \
         -i \
         -p "Screenshot" \
         -theme-str 'window { width: 20%; }' \
-        -theme-str 'listview { lines: 1; }'
+        -theme-str 'listview { lines: 2; }'
     )
 
     case "$chosen" in
+      "$regioncb")
+        ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" - | ${pkgs.wl-clipboard}/bin/wl-copy
+        ${pkgs.libnotify}/bin/notify-send "Screenshot copied" "$file"
+        ;;
       "$region")
         file="$dir/$(date +'%Y-%m-%d_%H-%M-%S').png"
         ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" "$file"
+        ${pkgs.wl-clipboard}/bin/wl-copy < "$file"
         ${pkgs.libnotify}/bin/notify-send "Screenshot saved" "$file"
         ;;
     esac
@@ -219,12 +225,6 @@ in
       kb-mode-complete = "Control+Shift+Right";
       kb-mode-next = "Shift+Right,Control+l";
     };
-    modes = [
-      {
-        name = "screenshot";
-        script = "${screenshotScript}";
-      }
-    ];
   };
 
   services.dunst = {
@@ -628,7 +628,7 @@ in
       "$mainMod" = "SUPER";
       "$term" = "alacritty";
       "$menu" = "rofi -show drun -show-icons";
-      "$screenshotMenu" = "rofi -show screenshot";
+      "$screenshotMenu" = "${screenshotScript}";
 
       bind = [
         "$mainMod, Return, exec, $term"

@@ -44,6 +44,7 @@ let
 
   appPackages = with pkgs; [
     vivaldi
+    zed
   ];
 in
 {
