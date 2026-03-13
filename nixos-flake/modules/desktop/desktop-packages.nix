@@ -18,6 +18,10 @@ in
       swaybg
       swayosd
       nautilus
+      grim
+      slurp
+      gpu-screen-recorder
+      libva-utils
     ];
 
     environment.sessionVariables = {

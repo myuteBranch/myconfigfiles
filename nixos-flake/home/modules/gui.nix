@@ -65,6 +65,30 @@ let
     monitor:
     "${monitor.name}, ${monitor.resolution}, ${monitor.position}, ${toString monitor.scale}"
   ) monitors;
+
+  screenshotScript = pkgs.writeShellScript "rofi-screenshot" ''
+    dir="$HOME/Pictures/Screenshots"
+    mkdir -p "$dir"
+
+    region="󰹑 Screenshot Region"
+
+    chosen=$(
+      printf "%s\n" "$region" | ${pkgs.rofi}/bin/rofi \
+        -dmenu \
+        -i \
+        -p "Screenshot" \
+        -theme-str 'window { width: 20%; }' \
+        -theme-str 'listview { lines: 1; }'
+    )
+
+    case "$chosen" in
+      "$region")
+        file="$dir/$(date +'%Y-%m-%d_%H-%M-%S').png"
+        ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" "$file"
+        ${pkgs.libnotify}/bin/notify-send "Screenshot saved" "$file"
+        ;;
+    esac
+  '';
 in
 {
   home.packages = with pkgs; [
@@ -188,12 +212,19 @@ in
       display-drun = " Apps";
       display-run = " Run";
       display-window = " Win";
+      display-screenshot = "󰹑 Shot";
       sidebar-mode = true;
       kb-row-down = "Down,Control+n";
       kb-row-up = "Up,Control+p";
       kb-mode-complete = "Control+Shift+Right";
       kb-mode-next = "Shift+Right,Control+l";
     };
+    modes = [
+      {
+        name = "screenshot";
+        script = "${screenshotScript}";
+      }
+    ];
   };
 
   services.dunst = {
@@ -597,12 +628,14 @@ in
       "$mainMod" = "SUPER";
       "$term" = "alacritty";
       "$menu" = "rofi -show drun -show-icons";
+      "$screenshotMenu" = "rofi -show screenshot";
 
       bind = [
         "$mainMod, Return, exec, $term"
         "$mainMod SHIFT, Q, killactive,"
         "$mainMod SHIFT, X, exec, systemctl suspend"
         "$mainMod, Space, exec, $menu"
+        "$mainMod, S, exec, $screenshotMenu"
 
         "$mainMod, H, movefocus, l"
         "$mainMod, L, movefocus, r"

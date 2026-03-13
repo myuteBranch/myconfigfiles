@@ -11,11 +11,13 @@ let
     fish
     fzf
     git
+    jq
     jujutsu
     less
     neovim
     openssh
     starship
+    tmux
     vim
     wget
   ];

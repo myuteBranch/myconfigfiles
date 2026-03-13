@@ -3,6 +3,8 @@
     enable = true;
     settings = {
       aws.symbol = "  ";
+      gcloud.symbol = "  ";
+      azure.symbol = "  ";
       buf.symbol = " ";
       c.symbol = " ";
       conda.symbol = " ";

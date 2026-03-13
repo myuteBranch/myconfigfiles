@@ -4,6 +4,140 @@ let
   tmuxInitScript = pkgs.writeShellScript "tmux-init" ''
     exec sh "$HOME/src/myconfigfiles/scripts/tmux_session.sh" "$@"
   '';
+
+  tmuxConf = ''
+    # Initial setup
+    set -g default-terminal xterm-256color
+    set -g status-keys vi
+
+
+    # use C-j and C-f for the prefix.
+    set-option -g prefix C-b
+    set-option -g prefix2 C-f
+    unbind-key C-j
+    bind-key C-j send-prefix
+    set -g base-index 1
+
+
+    # Use Alt-arrow keys without prefix key to switch panes
+    bind -n M-h select-pane -L
+    bind -n M-l select-pane -R
+    bind -n M-K select-pane -U
+    bind -n M-J select-pane -D
+
+
+    # Set easier window split keys
+    bind-key v split-window -h
+    bind-key h split-window -v
+
+
+    # Shift arrow to switch windows
+    bind -n M-Left  previous-window
+    bind -n M-Right next-window
+
+
+    # Easily reorder windows with CTRL+SHIFT+Arrow
+    bind-key -n C-S-Left swap-window -t -1
+    bind-key -n C-S-Right swap-window -t +1
+
+
+    # Synchronize panes
+    bind-key y set-window-option synchronize-panes\; display-message "synchronize mode toggled."
+
+
+    # Easy config reload
+    bind-key r source-file ~/.tmux.conf \; display-message "tmux.conf reloaded."
+
+
+    # Easy clear history
+    bind-key L clear-history
+
+
+    # Key bindings for copy-paste
+    setw -g mode-keys vi
+    unbind p
+    bind p paste-buffer
+    bind-key -T copy-mode-vi 'v' send -X begin-selection
+    bind-key -T copy-mode-vi 'y' send -X copy-selection-and-cancel
+
+
+    # Mouse Mode
+    set -g mouse on
+
+
+    # Lengthen the amount of time status messages are displayed
+    set-option -g display-time 3000
+    set-option -g display-panes-time 3000
+
+
+    # Set the base-index to 1 rather than 0
+    set -g base-index 1
+    set-window-option -g pane-base-index 1
+
+
+    # Automatically set window title
+    set-window-option -g automatic-rename on
+    set-option -g set-titles on
+
+
+    # Allow the arrow key to be used immediately after changing windows.
+    set-option -g repeat-time 0
+
+
+    # No delay for escape key press
+    set -sg escape-time 0
+
+    # Change background color of a tab when activity occurs
+    setw -g monitor-activity on
+
+
+    # Do NOT reset the color of the tab after activity stops occuring
+    setw -g monitor-silence 0
+
+
+    # Disable bell
+    setw -g monitor-bell off
+
+
+    # Disable visual text box when activity occurs
+    set -g visual-activity off
+
+    ### THEME: MATTE BLACK ###
+    # Base colors
+    set -g status-bg "#0f0f0f"
+    set -g status-fg "#bbbbbb"
+
+    # Active window
+    set -g window-status-current-style fg="#ffffff",bg="#232323",bold
+
+    # Inactive windows
+    set -g window-status-style fg="#666666",bg="#0f0f0f"
+
+    # Pane borders
+    set -g pane-border-style fg="#333333"
+    set -g pane-active-border-style fg="#888888"
+
+    # Message appearance (for prompts, searches, etc.)
+    set -g message-style bg="#1a1a1a",fg="#cccccc"
+
+    # Status left/right configuration
+    set -g status-left-length 40
+    set -g status-right-length 80
+
+    set -g status-left "#[fg=#888888,bg=#0f0f0f] #S #[default]"
+    set -g status-right "#[fg=#555555,bg=#0f0f0f] %Y-%m-%d #[fg=#888888]| %H:%M #[default]"
+
+    # Window list style
+    setw -g window-status-format " #[fg=#555555]#I:#W "
+    setw -g window-status-current-format " #[fg=#ffffff,bg=#232323]#I:#W* "
+
+    # Remove visual clutter
+    set -g status-justify centre
+    set -g status-interval 5
+
+    ### Optional: Better copy mode colors ###
+    set -g mode-style bg="#1a1a1a",fg="#cccccc"
+  '';
 in
 {
   home.packages = with pkgs; [
@@ -136,4 +270,11 @@ in
       '';
     };
   };
+
+  programs.tmux = {
+    enable = true;
+    extraConfig = tmuxConf;
+  };
+
+  home.file.".tmux.conf".text = tmuxConf;
 }

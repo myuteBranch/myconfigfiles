@@ -28,7 +28,8 @@
     networkInterface = "wlp0s20f3";
   };
 
-  myConfig.remoteDesktop.xrdp.enable = true;
-
   virtualisation.docker.enable = true;
+  services.logind.lidSwitch = "ignore";
+  services.logind.lidSwitchDocked = "ignore";
+
 }
