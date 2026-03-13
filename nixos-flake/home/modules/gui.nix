@@ -1,4 +1,5 @@
-{ pkgs, ... }:
+{ pkgs, monitors ? [ { name = "DP-1"; resolution = "preferred"; position = "auto"; scale = 1; } { name = "HDMI-A-2"; resolution = "preferred"; position = "auto"; scale = 1; } ], networkInterface ? "eno1", ... }:
+
 
 let
   powermenuScript = pkgs.writeShellScript "waybar-powermenu" ''
@@ -9,7 +10,7 @@ let
     sleep=" Sleep"
 
     confirm_exit() {
-      printf "no\nyes\n" | ${pkgs.rofi-wayland}/bin/rofi \
+      printf "no\nyes\n" | ${pkgs.rofi}/bin/rofi \
         -dmenu \
         -i \
         -p "Are you sure?" \
@@ -24,7 +25,7 @@ let
         "$sleep" \
         "$reboot" \
         "$shutdown" \
-      | ${pkgs.rofi-wayland}/bin/rofi \
+      | ${pkgs.rofi}/bin/rofi \
           -dmenu \
           -i \
           -p "Power Menu" \
@@ -59,6 +60,11 @@ let
         ;;
     esac
   '';
+
+  hyprlandMonitors = map (
+    monitor:
+    "${monitor.name}, ${monitor.resolution}, ${monitor.position}, ${toString monitor.scale}"
+  ) monitors;
 in
 {
   home.packages = with pkgs; [
@@ -169,7 +175,7 @@ in
 
   programs.rofi = {
     enable = true;
-    package = pkgs.rofi-wayland;
+    package = pkgs.rofi;
     terminal = "alacritty";
     extraConfig = {
       modi = "drun,run,window";
@@ -188,9 +194,6 @@ in
       kb-mode-complete = "Control+Shift+Right";
       kb-mode-next = "Shift+Right,Control+l";
     };
-    theme = ''
-      @theme "/usr/share/rofi/themes/gruvbox-dark.rasi"
-    '';
   };
 
   services.dunst = {
@@ -252,113 +255,181 @@ in
     systemd.enable = true;
     style = ''
       * {
-          border: none;
-          border-radius: 0;
-          min-height: 0;
-          font-family: "DejaVuSansM Nerd Font";
-          font-weight: 500;
-          font-size: 12px;
-          padding: 0;
-          opacity: 0.95;
+        background-color: #2d353b;
+        color: #d3c6aa;
+
+        border: none;
+        border-radius: 0;
+        min-height: 0;
+        font-family: 'JetBrainsMono Nerd Font Mono';
+        font-size: 13px;
       }
 
-      window#waybar {
-          background: #1d2021;
-          border: 2px solid #3c3836;
+      window#waybar{
+          all:unset;
       }
-
+      .modules-left {
+          padding:7px;
+          margin:10 0 5 10;
+          border-radius:10px;
+          background: alpha(@background,.6);
+          box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
+      }
+      .modules-center {
+          padding:7px;
+          margin:10 0 5 0;
+          border-radius:10px;
+          background: alpha(@background,.6);
+          box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
+      }
+      .modules-right {
+          padding:7px;
+          margin: 10 10 5 0;
+          border-radius:10px;
+          background: alpha(@background,.6);
+          box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
+      }
       tooltip {
-          background-color: #1d2021;
-          border: 2px solid #7c6f64;
+          background:@background;
+          color: @color7;
       }
-
-      #clock,
-      #disk,
-      #tray,
-      #cpu,
-      #memory,
-      #battery,
-      #network,
-      #custom-powermenu,
-      #pulseaudio {
-          margin: 2px 2px 2px 0px;
-          padding: 2px 8px;
+      #clock:hover, #custom-pacman:hover, #custom-notification:hover,#bluetooth:hover,#network:hover,#battery:hover, #cpu:hover,#memory:hover,#temperature:hover{
+          transition: all .3s ease;
+          color:@color9;
       }
+      #custom-notification {
+          padding: 0px 5px;
+          transition: all .3s ease;
+          color:@color7;
+      }
+      #clock{
+          padding: 0px 5px;
+          color:@color7;
+          transition: all .3s ease;
+      }
+      #custom-pacman{
+          padding: 0px 5px;
+          transition: all .3s ease;
+          color:@color7;
 
+      }
       #workspaces {
-          background-color: #303536;
-          margin: 2px 2px 2px 2px;
-          border: 2px solid #434a4c;
+          padding: 0px 5px;
       }
-
       #workspaces button {
-          all: initial;
-          min-width: 0;
-          box-shadow: inset 0 -3px transparent;
-          padding: 2px 4px;
-          margin: 0px 2px 0px 0px;
-          color: #c7ab7a;
+          all:unset;
+          padding: 0px 5px;
+          color: alpha(@color9,.4);
+          transition: all .2s ease;
+      }
+      #workspaces button:hover {
+          color:rgba(0,0,0,0);
+          border: none;
+          text-shadow: 0px 0px 1.5px rgba(0, 0, 0, .5);
+          transition: all 1s ease;
+      }
+      #workspaces button.active {
+          color: @color9;
+          border: none;
+          text-shadow: 0px 0px 2px rgba(0, 0, 0, .5);
+      }
+      #workspaces button.empty {
+          color: rgba(0,0,0,0);
+          border: none;
+          text-shadow: 0px 0px 1.5px rgba(0, 0, 0, .2);
+      }
+      #workspaces button.empty:hover {
+          color: rgba(0,0,0,0);
+          border: none;
+          text-shadow: 0px 0px 1.5px rgba(0, 0, 0, .5);
+          transition: all 1s ease;
+      }
+      #workspaces button.empty.active {
+          color: @color9;
+          border: none;
+          text-shadow: 0px 0px 2px rgba(0, 0, 0, .5);
+      }
+      #bluetooth{
+          padding: 0px 5px;
+          transition: all .3s ease;
+          color:@color7;
+
+      }
+      #network{
+          padding: 0px 5px;
+          transition: all .3s ease;
+          color:@color7;
+
+      }
+      #battery{
+          padding: 0px 5px;
+          transition: all .3s ease;
+          color:@color7;
+
+
+      }
+      #battery.charging {
+          color: #26A65B;
       }
 
-      #workspaces button.visible {
-          color: #ddffa1;
+      #battery.warning:not(.charging) {
+          color: #ffbe61;
       }
 
-      #workspaces button.focused {
-          color: #d4be98;
+      #battery.critical:not(.charging) {
+          color: #f53c3c;
+          animation-name: blink;
+          animation-duration: 0.5s;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+          animation-direction: alternate;
+      }
+      #group-expand{
+          padding: 0px 5px;
+          transition: all .3s ease;
+      }
+      #custom-expand{
+          padding: 0px 5px;
+          color:alpha(@foreground,.2);
+          text-shadow: 0px 0px 2px rgba(0, 0, 0, .7);
+          transition: all .3s ease;
+      }
+      #custom-expand:hover{
+          color:rgba(255,255,255,.2);
+          text-shadow: 0px 0px 2px rgba(255, 255, 255, .5);
+      }
+      #custom-colorpicker{
+          padding: 0px 5px;
+      }
+      #cpu,#memory,#temperature{
+          padding: 0px 5px;
+          transition: all .3s ease;
+          color:@color7;
+
+      }
+      #custom-endpoint{
+          color:transparent;
+          text-shadow: 0px 0px 1.5px rgba(0, 0, 0, 1);
+
+      }
+      #tray{
+          padding: 0px 5px;
+          transition: all .3s ease;
+
+      }
+      #tray menu * {
+          padding: 0px 5px;
+          transition: all .3s ease;
       }
 
-      #workspaces button.urgent {
-          background-color: #ff0000;
-      }
-
-      #clock {
-          background-color: #303536;
-          border: 2px solid #434a4c;
-          color: #d4be98;
-      }
-
-      #tray {
-          background-color: #d4be98;
-          border: 2px solid #c7ab7a;
-      }
-
-      #battery {
-          background-color: #a9b665;
-          border: 2px solid #c7ab7a;
-          color: #6c782e;
-      }
-
-      #cpu,
-      #memory,
-      #disk,
-      #network,
-      #powermenu,
-      #pulseaudio {
-          background-color: #ddc7a1;
-          border: 2px solid #c7ab7a;
-          color: #1d2021;
-      }
-
-      #cpu.critical,
-      #memory.critical {
-          background-color: #ddc7a1;
-          border: 2px solid #c7ab7a;
-          color: #c14a4a;
-      }
-
-      #battery.warning,
-      #battery.critical,
-      #battery.urgent {
-          background-color: #ddc7a1;
-          border: 2px solid #c7ab7a;
-          color: #c14a4a;
+      #tray menu separator {
+          padding: 0px 5px;
+          transition: all .3s ease;
       }
     '';
 
     settings = [
       {
-        output = "DP-1";
         layer = "top";
         position = "top";
         height = 24;
@@ -371,13 +442,15 @@ in
           "pulseaudio"
           "network"
           "custom/powermenu"
+          "tray"
+          "keyboard-state"
         ];
 
         "hyprland/workspaces" = {
           format = "{id}: {icon}";
           format-icons = {
-            default = "";
-            active = "";
+            active = "";
+            default = "";
             urgent = "";
           };
           persistent_workspaces."*" = 5;
@@ -415,70 +488,12 @@ in
         };
 
         network = {
-          interface = "eno1";
+          interface = networkInterface;
           format-ethernet = " {bandwidthDownBytes}  {bandwidthUpBytes}";
           format-disconnected = "⚠ Disconnected";
           tooltip-format = "{ifname}: {ipaddr}/{cidr} ";
           tooltip-format-disconnected = "Disconnected";
           interval = 3;
-        };
-
-        "custom/powermenu" = {
-          format = "";
-          tooltip = true;
-          tooltip-format = "Power Menu";
-          on-click = "${powermenuScript} &";
-        };
-      }
-      {
-        output = "HDMI-A-2";
-        layer = "top";
-        position = "top";
-        height = 24;
-        modules-left = [ "hyprland/workspaces" ];
-        modules-center = [ "clock" ];
-        modules-right = [
-          "cpu"
-          "memory"
-          "disk"
-          "keyboard-state"
-          "pulseaudio"
-          "network"
-          "tray"
-          "custom/powermenu"
-        ];
-
-        "hyprland/workspaces" = {
-          format = "{id}: {icon}";
-          format-icons = {
-            default = "";
-            active = "";
-            urgent = "";
-          };
-          persistent_workspaces."*" = 5;
-          all-outputs = false;
-        };
-
-        clock = {
-          format = " {:%A, %d %B %Y %H:%M}";
-          tooltip-format = "<big>{:%Y-%m-%d %H:%M:%S}</big>";
-          format-alt = " {:%Y-%m-%d %H:%M:%S}";
-        };
-
-        cpu = {
-          format = "CPU {usage: >2}%";
-          interval = 2;
-        };
-
-        memory = {
-          format = "RAM {}%";
-          interval = 2;
-        };
-
-        disk = {
-          path = "/";
-          format = " {path}: {percentage_used}%";
-          interval = 25;
         };
 
         "keyboard-state" = {
@@ -489,23 +504,6 @@ in
             locked = "";
             unlocked = "";
           };
-        };
-
-        pulseaudio = {
-          format = "{icon} {volume}%";
-          format-muted = " muted";
-          format-icons.default = [ "" "" "" ];
-          scroll-step = 5;
-          on-click = "pavucontrol";
-        };
-
-        network = {
-          interface = "eno1";
-          format-ethernet = " {bandwidthDownBytes}  {bandwidthUpBytes}";
-          format-disconnected = "⚠ Disconnected";
-          tooltip-format = "{ifname}: {ipaddr}/{cidr} ";
-          tooltip-format-disconnected = "Disconnected";
-          interval = 3;
         };
 
         tray = {
@@ -526,174 +524,159 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     systemd.enable = true;
+    settings = {
+      monitor = hyprlandMonitors;
+
+      exec-once = [
+        "swaybg -i ~/Pictures/background.jpg -m fill"
+        "swayosd-server"
+        "dunst"
+        "nm-applet --indicator"
+        "blueman-applet"
+        "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
+        "systemctl --user import-environment $(env | cut -d'=' -f 1)"
+        "dbus-update-activation-environment --systemd --all"
+        "swayidle -w timeout 7200 '${pkgs.swaylock}/bin/swaylock -f -c 000000' timeout 3600 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on'"
+      ];
+
+      source = [ "~/.config/hypr/env.conf" ];
+
+      input = {
+        kb_layout = "us, us";
+        kb_variant = "dvorak,";
+        kb_options = "grp:alt_shift_toggle";
+        follow_mouse = 1;
+        sensitivity = 0;
+
+        touchpad = {
+          natural_scroll = true;
+        };
+      };
+
+      general = {
+        gaps_in = 2;
+        gaps_out = 5;
+        border_size = 2;
+        "col.active_border" = "rgba(458588ff)";
+        "col.inactive_border" = "rgba(3c3836ff)";
+        layout = "dwindle";
+      };
+
+      decoration = {
+        rounding = 5;
+
+        blur = {
+          enabled = true;
+          size = 3;
+          passes = 1;
+        };
+      };
+
+      animations = {
+        enabled = 0;
+        bezier = [ "myBezier, 0.05, 0.9, 0.1, 1.05" ];
+        animation = [
+          "windows, 1, 7, myBezier"
+          "windowsOut, 1, 7, default, popin 80%"
+          "border, 1, 10, default"
+          "borderangle, 1, 8, default"
+          "fade, 1, 7, default"
+          "workspaces, 1, 6, default"
+        ];
+      };
+
+      dwindle = {
+        pseudotile = true;
+        preserve_split = true;
+      };
+
+      misc = {
+        force_default_wallpaper = 0;
+      };
+
+      "$mainMod" = "SUPER";
+      "$term" = "alacritty";
+      "$menu" = "rofi -show drun -show-icons";
+
+      bind = [
+        "$mainMod, Return, exec, $term"
+        "$mainMod SHIFT, Q, killactive,"
+        "$mainMod SHIFT, X, exec, systemctl suspend"
+        "$mainMod, Space, exec, $menu"
+
+        "$mainMod, H, movefocus, l"
+        "$mainMod, L, movefocus, r"
+        "$mainMod, K, movefocus, u"
+        "$mainMod, J, movefocus, d"
+        "$mainMod, Left, movefocus, l"
+        "$mainMod, Right, movefocus, r"
+        "$mainMod, Up, movefocus, u"
+        "$mainMod, Down, movefocus, d"
+
+        "$mainMod SHIFT, H, movewindow, l"
+        "$mainMod SHIFT, L, movewindow, r"
+        "$mainMod SHIFT, K, movewindow, u"
+        "$mainMod SHIFT, J, movewindow, d"
+        "$mainMod SHIFT, Left, movewindow, l"
+        "$mainMod SHIFT, Right, movewindow, r"
+        "$mainMod SHIFT, Up, movewindow, u"
+        "$mainMod SHIFT, Down, movewindow, d"
+
+        "$mainMod SHIFT, V, layoutmsg, togglesplit"
+        "$mainMod, E, layoutmsg, togglesplit"
+        "$mainMod SHIFT, Space, togglefloating,"
+        "$mainMod, F, fullscreen, 0"
+
+        "$mainMod, 1, workspace, 1"
+        "$mainMod, 2, workspace, 2"
+        "$mainMod, 3, workspace, 3"
+        "$mainMod, 4, workspace, 4"
+        "$mainMod, 5, workspace, 5"
+        "$mainMod, 6, workspace, 6"
+        "$mainMod, 7, workspace, 7"
+        "$mainMod, 8, workspace, 8"
+        "$mainMod, 9, workspace, 9"
+        "$mainMod, 0, workspace, 10"
+
+        "$mainMod SHIFT, 1, movetoworkspace, 1"
+        "$mainMod SHIFT, 2, movetoworkspace, 2"
+        "$mainMod SHIFT, 3, movetoworkspace, 3"
+        "$mainMod SHIFT, 4, movetoworkspace, 4"
+        "$mainMod SHIFT, 5, movetoworkspace, 5"
+        "$mainMod SHIFT, 6, movetoworkspace, 6"
+        "$mainMod SHIFT, 7, movetoworkspace, 7"
+        "$mainMod SHIFT, 8, movetoworkspace, 8"
+        "$mainMod SHIFT, 9, movetoworkspace, 9"
+        "$mainMod SHIFT, 0, movetoworkspace, 10"
+
+        "$mainMod, mouse_down, workspace, e+1"
+        "$mainMod, mouse_up, workspace, e-1"
+
+        "$mainMod SHIFT, C, exec, hyprctl reload"
+        "$mainMod SHIFT, E, exit,"
+        "$mainMod, R, submap, resize"
+      ];
+
+      bindm = [
+        "$mainMod, mouse:272, movewindow"
+        "$mainMod, mouse:273, resizewindow"
+      ];
+
+      submap = "reset";
+
+      binde = [
+        ", l, resizeactive, 10 0"
+        ", h, resizeactive, -10 0"
+        ", k, resizeactive, 0 -10"
+        ", j, resizeactive, 0 10"
+      ];
+
+      bindl = [
+        ", escape, submap, reset"
+      ];
+    };
 
     extraConfig = ''
-      # ~/.config/hypr/hyprland.conf
-
-      # --- Monitors ---
-      monitor = , preferred, auto, 1
-
-      # --- Startup Applications ---
-      exec-once = swaybg -i ~/Pictures/background.jpg -m fill
-      exec-once = swayosd-server &
-      exec-once = waybar &
-      exec-once = dunst &
-      exec-once = nm-applet --indicator &
-      exec-once = blueman-applet &
-      exec-once = ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
-
-      # Slow app launch fix -- set systemd vars
-      exec-once = systemctl --user import-environment $(env | cut -d'=' -f 1)
-      exec-once = dbus-update-activation-environment --systemd --all
-
-      # --- Idle and Screen Locking ---
-      exec-once = swayidle -w \
-                  timeout 7200 '${pkgs.swaylock}/bin/swaylock -f -c 000000' \
-                  timeout 3600 'hyprctl dispatch dpms off' \
-                  resume 'hyprctl dispatch dpms on'
-
-      # --- Include external configuration files ---
-      source = ~/.config/hypr/env.conf
-
-      # --- Input Configuration ---
-      input {
-          kb_layout = us, us
-          kb_variant = dvorak,
-          kb_model =
-          kb_options = grp:alt_shift_toggle
-          kb_rules =
-
-          follow_mouse = 1
-
-          touchpad {
-              natural_scroll = yes
-          }
-
-          sensitivity = 0
-      }
-
-      # --- General Settings ---
-      general {
-          gaps_in = 2
-          gaps_out = 5
-          border_size = 2
-          col.active_border = rgba(458588ff)
-          col.inactive_border = rgba(3c3836ff)
-          layout = dwindle
-      }
-
-      # --- Decoration ---
-      decoration {
-          rounding = 5
-
-          blur {
-              enabled = true
-              size = 3
-              passes = 1
-          }
-      }
-
-      # --- Animations ---
-      animations {
-          enabled = 0
-
-          bezier = myBezier, 0.05, 0.9, 0.1, 1.05
-
-          animation = windows, 1, 7, myBezier
-          animation = windowsOut, 1, 7, default, popin 80%
-          animation = border, 1, 10, default
-          animation = borderangle, 1, 8, default
-          animation = fade, 1, 7, default
-          animation = workspaces, 1, 6, default
-      }
-
-      # --- Layout Specifics ---
-      dwindle {
-          pseudotile = yes
-          preserve_split = yes
-      }
-
-      master {
-      }
-
-      # --- Gestures ---
-      gestures {
-          workspace_swipe = off
-      }
-
-      # --- Miscellaneous ---
-      misc {
-          force_default_wallpaper = 0
-      }
-
-      # --- Variables ---
-      $mainMod = SUPER
-      $term = alacritty
-      $menu = rofi -show drun -show-icons
-
-      # --- Keybindings ---
-      bind = $mainMod, Return, exec, $term
-      bind = $mainMod SHIFT, Q, killactive,
-      bind = $mainMod SHIFT, X, exec, systemctl suspend
-      bind = $mainMod, Space, exec, $menu
-
-      bind = $mainMod, H, movefocus, l
-      bind = $mainMod, L, movefocus, r
-      bind = $mainMod, K, movefocus, u
-      bind = $mainMod, J, movefocus, d
-      bind = $mainMod, Left, movefocus, l
-      bind = $mainMod, Right, movefocus, r
-      bind = $mainMod, Up, movefocus, u
-      bind = $mainMod, Down, movefocus, d
-
-      bind = $mainMod SHIFT, H, movewindow, l
-      bind = $mainMod SHIFT, L, movewindow, r
-      bind = $mainMod SHIFT, K, movewindow, u
-      bind = $mainMod SHIFT, J, movewindow, d
-      bind = $mainMod SHIFT, Left, movewindow, l
-      bind = $mainMod SHIFT, Right, movewindow, r
-      bind = $mainMod SHIFT, Up, movewindow, u
-      bind = $mainMod SHIFT, Down, movewindow, d
-
-      bind = $mainMod SHIFT, V, layoutmsg, togglesplit
-      bind = $mainMod SHIFT, H, layoutmsg, togglesplit
-      bind = $mainMod, E, layoutmsg, togglesplit
-      bind = $mainMod SHIFT, Space, togglefloating,
-      bind = $mainMod, F, fullscreen, 0
-
-      bind = $mainMod, 1, workspace, 1
-      bind = $mainMod, 2, workspace, 2
-      bind = $mainMod, 3, workspace, 3
-      bind = $mainMod, 4, workspace, 4
-      bind = $mainMod, 5, workspace, 5
-      bind = $mainMod, 6, workspace, 6
-      bind = $mainMod, 7, workspace, 7
-      bind = $mainMod, 8, workspace, 8
-      bind = $mainMod, 9, workspace, 9
-      bind = $mainMod, 0, workspace, 10
-
-      bind = $mainMod SHIFT, 1, movetoworkspace, 1
-      bind = $mainMod SHIFT, 2, movetoworkspace, 2
-      bind = $mainMod SHIFT, 3, movetoworkspace, 3
-      bind = $mainMod SHIFT, 4, movetoworkspace, 4
-      bind = $mainMod SHIFT, 5, movetoworkspace, 5
-      bind = $mainMod SHIFT, 6, movetoworkspace, 6
-      bind = $mainMod SHIFT, 7, movetoworkspace, 7
-      bind = $mainMod SHIFT, 8, movetoworkspace, 8
-      bind = $mainMod SHIFT, 9, movetoworkspace, 9
-      bind = $mainMod SHIFT, 0, movetoworkspace, 10
-
-      bind = $mainMod, mouse_down, workspace, e+1
-      bind = $mainMod, mouse_up, workspace, e-1
-
-      bindm = $mainMod, mouse:272, movewindow
-      bindm = $mainMod, mouse:273, resizewindow
-
-      bind = $mainMod SHIFT, C, exec, hyprctl reload
-      bind = $mainMod SHIFT, E, exit,
-
-      bind = $mainMod, R, submap, resize
-
       submap = resize
           binde = , l, resizeactive, 10 0
           binde = , h, resizeactive, -10 0
@@ -701,6 +684,52 @@ in
           binde = , j, resizeactive, 0 10
           bind = , escape, submap, reset
       submap = reset
+
+      windowrule = float on, match:class steam
+      windowrule = center on, match:class steam, match:title Steam
+      windowrule = tag -default-opacity, match:class steam.*
+      windowrule = opacity 1 1, match:class steam.*
+      windowrule = size 1100 700, match:class steam, match:title Steam
+      windowrule = size 460 800, match:class steam, match:title Friends List
+      windowrule = idle_inhibit fullscreen, match:class steam
+
+      windowrule = no_screen_share on, match:class ^(Bitwarden)$
+      windowrule = tag +floating-window, match:class ^(Bitwarden)$
+
+      # Floating windows
+      windowrule = float on, match:tag floating-window
+      windowrule = center on, match:tag floating-window
+      windowrule = size 875 600, match:tag floating-window
+
+      windowrule = tag +floating-window, match:class (xdg-desktop-portal-gtk|sublime_text|DesktopEditors|org.gnome.Nautilus), match:title ^(Open.*Files?|Open [F|f]older.*|Save.*Files?|Save.*As|Save|All Files|.*wants to [open|save].*|[C|c]hoose.*)
+      windowrule = float on, match:class org.gnome.Calculator
+
+      # Fullscreen screensave      # No transparency on media windows
+      windowrule = tag -default-opacity, match:class ^(zoom|vlc|mpv|org.kde.kdenlive|com.obsproject.Studio|com.github.PintaProject.Pinta|imv|org.gnome.NautilusPreviewer)$
+      windowrule = opacity 1 1, match:class ^(zoom|vlc|mpv|org.kde.kdenlive|com.obsproject.Studio|com.github.PintaProject.Pinta|imv|org.gnome.NautilusPreviewer)$
+
+      # Popped window rounding
+      windowrule = rounding 8, match:tag pop
+
+      # Prevent idle while open
+      windowrule = idle_inhibit always, match:tag noidle
+
+      # Browser types
+      windowrule = tag +chromium-based-browser, match:class ((google-)?[cC]hrom(e|ium)|[bB]rave-browser|[mM]icrosoft-edge|Vivaldi-stable|helium)
+      windowrule = tag +firefox-based-browser, match:class ([fF]irefox|zen|librewolf)
+      windowrule = tag -default-opacity, match:tag chromium-based-browser
+      windowrule = tag -default-opacity, match:tag firefox-based-browser
+
+      # Video apps: remove chromium browser tag so they don't get opacity applied
+      windowrule = tag -chromium-based-browser, match:class (chrome-youtube.com__-Default|chrome-app.zoom.us__wc_home-Default)
+      windowrule = tag -default-opacity, match:class (chrome-youtube.com__-Default|chrome-app.zoom.us__wc_home-Default)
+
+      # Force chromium-based browsers into a tile to deal with --app bug
+      windowrule = tile on, match:tag chromium-based-browser
+
+      # Only a subtle opacity change, but not for video sites
+      windowrule = opacity 1.0 0.97, match:tag chromium-based-browser
+      windowrule = opacity 1.0 0.97, match:tag firefox-based-browser
     '';
   };
 

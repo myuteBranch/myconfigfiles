@@ -39,10 +39,15 @@ let
     go
     rustup
   ];
+
+  appPackages = with pkgs; [
+    vivaldi
+  ];
 in
 {
   environment.systemPackages =
     cliPackages
     ++ buildPackages
-    ++ languagePackages;
+    ++ languagePackages
+    ++ appPackages;
 }

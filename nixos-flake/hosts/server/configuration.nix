@@ -1,10 +1,9 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
     ./hardware-configuration.nix
     ../../modules/common.nix
-    ../../modules/remote-desktop.nix
     ../../modules/hyprland.nix
     ../../modules/host-defaults.nix
   ];
@@ -15,10 +14,19 @@
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  # Set your time zone.
-  time.timeZone = "Americas/Chicago";
 
-  myConfig.desktop.hyprland.enable = true;
+  myConfig.desktop.hyprland = {
+    enable = true;
+    monitors = [
+      {
+        name = "eDP-1";
+        resolution = "preferred";
+        position = "auto";
+        scale = 1;
+      }
+    ];
+    networkInterface = "wlp0s20f3";
+  };
 
   myConfig.remoteDesktop.xrdp.enable = true;
 

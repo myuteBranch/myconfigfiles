@@ -10,7 +10,7 @@ in
       hyprpicker
       hypridle
       waybar
-      rofi-wayland
+      rofi
       wl-clipboard
       dunst
       lxappearance

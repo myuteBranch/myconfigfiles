@@ -12,5 +12,5 @@
     options = lib.mkDefault "--delete-older-than 7d";
   };
 
-  documentation.man.generateCaches = lib.mkDefault true;
+  documentation.man.cache.enable = lib.mkDefault true;
 }

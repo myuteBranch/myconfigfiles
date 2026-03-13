@@ -40,7 +40,7 @@ in
       nerd-fonts.jetbrains-mono
       nerd-fonts.caskaydia-mono
       noto-fonts
-      noto-fonts-emoji
+      noto-fonts-color-emoji
     ];
 
     environment.sessionVariables = {

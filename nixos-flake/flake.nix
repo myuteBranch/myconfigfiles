@@ -10,7 +10,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, ... }:
+  outputs = inputs@{ nixpkgs, home-manager, ... }:
     let
       lib = nixpkgs.lib;
 
@@ -27,26 +27,28 @@
           inherit system;
 
           specialArgs = {
-            inherit inputs self username hostname stateVersion;
+            inherit inputs username hostname stateVersion;
           };
 
           modules =
             [
               ./hosts/${configname}/configuration.nix
               home-manager.nixosModules.home-manager
-              {
+              ({ config, ... }: {
                 networking.hostName = hostname;
                 system.stateVersion = stateVersion;
 
                 home-manager = {
                   useGlobalPkgs = true;
                   useUserPackages = true;
+                  backupFileExtension = "bak";
                   extraSpecialArgs = {
-                    inherit inputs self username hostname stateVersion;
+                    inherit inputs username hostname stateVersion;
+                    inherit (config.myConfig.desktop.hyprland) monitors networkInterface;
                   };
                   users.${username} = import ./home/${username}.nix;
                 };
-              }
+              })
             ]
             ++ modules;
         };
@@ -62,7 +64,7 @@
 
         server = {
           hostname = "myute-nixos";
-          configname = "myute-nixos";
+          configname = "server";
           username = "myuteBranch";
           system = "x86_64-linux";
           stateVersion = "25.11";
