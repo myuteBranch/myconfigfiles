@@ -10,7 +10,8 @@
     };
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, ... }:
+  outputs =
+    inputs@{ nixpkgs, home-manager, ... }:
     let
       lib = nixpkgs.lib;
 
@@ -27,14 +28,20 @@
           inherit system;
 
           specialArgs = {
-            inherit inputs username hostname stateVersion;
+            inherit
+              inputs
+              username
+              hostname
+              stateVersion
+              ;
           };
 
-          modules =
-            [
-              ./hosts/${configname}/configuration.nix
-              home-manager.nixosModules.home-manager
-              ({ config, ... }: {
+          modules = [
+            ./hosts/${configname}/configuration.nix
+            home-manager.nixosModules.home-manager
+            (
+              { config, ... }:
+              {
                 networking.hostName = hostname;
                 system.stateVersion = stateVersion;
 
@@ -43,14 +50,20 @@
                   useUserPackages = true;
                   backupFileExtension = "bak";
                   extraSpecialArgs = {
-                    inherit inputs username hostname stateVersion;
+                    inherit
+                      inputs
+                      username
+                      hostname
+                      stateVersion
+                      ;
                     inherit (config.myConfig.desktop.hyprland) monitors networkInterface;
                   };
                   users.${username} = import ./home/${username}.nix;
                 };
-              })
-            ]
-            ++ modules;
+              }
+            )
+          ]
+          ++ modules;
         };
 
       hosts = {

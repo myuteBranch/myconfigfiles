@@ -1,0 +1,151 @@
+/**
+ * Monochrome rofi theme.
+ * Horizontal top mode switcher with light grayscale surfaces.
+ **/
+* {
+    background:       rgba ( 208, 208, 208, 94 % );
+    background-alt:   rgba ( 222, 222, 222, 94 % );
+    surface:          rgba ( 236, 236, 236, 96 % );
+    surface-light:    rgba ( 248, 248, 248, 98 % );
+
+    foreground:       rgba ( 42, 42, 42, 100 % );
+    foreground-dim:   rgba ( 82, 82, 82, 100 % );
+    black:            rgba ( 0, 0, 0, 100 % );
+    white:            rgba ( 255, 255, 255, 100 % );
+
+    accent:           rgba ( 250, 250, 250, 100 % );
+    accent-soft:      rgba ( 228, 228, 228, 100 % );
+    border:           rgba ( 0, 0, 0, 16 % );
+    border-strong:    rgba ( 0, 0, 0, 28 % );
+    overlay:          rgba ( 0, 0, 0, 0 % );
+    highlight:        bold rgba ( 42, 42, 42, 100 % );
+
+    background-color: var(overlay);
+    text-color:       var(foreground);
+    font:             "JetBrainsMono Nerd Font 14";
+}
+
+window {
+    transparency:     "screenshot";
+    padding:          12px;
+    children:         [ mainbox ];
+    orientation:      vertical;
+    location:         center;
+    anchor:           center;
+    background-color: var(overlay);
+    border-radius:    18px;
+    border:           0px;
+    spacing:          0;
+}
+
+mainbox {
+    spacing:          8px;
+    orientation:      vertical;
+    children:         [ mode-switcher, inputbar, listview ];
+}
+
+message {
+    enabled:          false;
+}
+
+inputbar {
+    padding:          14px 18px;
+    background-color: var(surface-light);
+    border:           1px;
+    border-color:     var(border-strong);
+    border-radius:    0px;
+    font:             "JetBrainsMono Nerd Font 14";
+    text-color:       var(foreground);
+}
+
+entry {
+    text-font:         inherit;
+    text-color:        inherit;
+    placeholder:       "Search";
+    placeholder-color: var(foreground-dim);
+}
+
+prompt {
+    text-font:  inherit;
+    margin:     0px 0.40em 0px 0px;
+    text-color: var(foreground-dim);
+}
+
+case-indicator {
+    text-font:  inherit;
+    text-color: var(foreground-dim);
+}
+
+listview {
+    padding:          10px;
+    background-color: var(background-alt);
+    dynamic:          false;
+    border-color:     var(border);
+    lines:            10;
+    border-radius:    0px 0px 18px 18px;
+    border:           0px 1px 1px;
+    spacing:          6px;
+}
+
+element {
+    padding:          8px 10px;
+    background-color: rgba ( 0, 0, 0, 0 % );
+    vertical-align:   0.50;
+    font:             inherit;
+    border-radius:    10px;
+    text-color:       var(foreground);
+}
+
+element selected.normal {
+    background-color: var(accent);
+    text-color:       var(black);
+}
+
+element selected.active {
+    background-color: var(surface-light);
+    text-color:       var(foreground);
+}
+
+element selected.urgent {
+    background-color: var(white);
+    text-color:       var(black);
+}
+
+element normal.active,
+element alternate.active {
+    text-color: var(foreground-dim);
+}
+
+element normal.urgent,
+element alternate.urgent {
+    text-color: var(foreground-dim);
+}
+
+mode-switcher {
+    orientation:      horizontal;
+    expand:           false;
+    spacing:          6px;
+    background-color: var(surface);
+    border:           1px;
+    border-color:     var(border);
+    border-radius:    18px 18px 0px 0px;
+    padding:          8px;
+}
+
+button {
+    text-color:       var(foreground);
+    padding:          10px 14px;
+    background-color: var(surface);
+    border-radius:    12px;
+    font:             "JetBrainsMono Nerd Font 12";
+    border:           0px;
+    horizontal-align: 0.50;
+    vertical-align:   0.50;
+}
+
+button selected.normal {
+    background-color: var(accent-soft);
+    border-color:     var(border-strong);
+    text-color:       var(black);
+    border:           1px;
+}

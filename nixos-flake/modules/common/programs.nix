@@ -9,4 +9,5 @@
     git.enable = true;
     neovim.enable = true;
   };
+
 }

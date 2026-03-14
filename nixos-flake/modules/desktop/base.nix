@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.myConfig.desktop.hyprland;
@@ -17,17 +22,10 @@ in
       wayland.enable = true;
     };
 
-    services.displayManager.defaultSession = "hyprland";
+    security.pam.services.sddm.enableGnomeKeyring = true;
+    security.pam.services.sddm-autologin.enableGnomeKeyring = true;
 
-    xdg.portal = {
-      enable = true;
-      xdgOpenUsePortal = true;
-      extraPortals = with pkgs; [
-        xdg-desktop-portal-gtk
-        xdg-desktop-portal-hyprland
-      ];
-      config.common.default = "*";
-    };
+    services.displayManager.defaultSession = "hyprland";
 
     programs = {
       dconf.enable = true;
@@ -56,6 +54,8 @@ in
       XDG_SESSION_TYPE = "wayland";
       XDG_CURRENT_DESKTOP = "Hyprland";
       XDG_SESSION_DESKTOP = "Hyprland";
+      GTK_THEME = "Flat-Remix-GTK-Grey-Darkest";
+
     };
   };
 }

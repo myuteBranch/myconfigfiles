@@ -57,7 +57,6 @@ in
     environment.systemPackages =
       with pkgs;
       [
-        glxinfo
         vulkan-tools
         vulkan-loader
         radeontop

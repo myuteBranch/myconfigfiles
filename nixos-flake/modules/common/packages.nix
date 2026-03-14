@@ -42,15 +42,7 @@ let
     rustup
   ];
 
-  appPackages = with pkgs; [
-    vivaldi
-    zed
-  ];
 in
 {
-  environment.systemPackages =
-    cliPackages
-    ++ buildPackages
-    ++ languagePackages
-    ++ appPackages;
+  environment.systemPackages = cliPackages ++ buildPackages ++ languagePackages;
 }
