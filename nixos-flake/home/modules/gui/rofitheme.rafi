@@ -22,7 +22,7 @@
 
     background-color: var(overlay);
     text-color:       var(foreground);
-    font:             "JetBrainsMono Nerd Font 14";
+    font:             "CaskaydiaMono Nerd Font 14";
 }
 
 window {
@@ -54,7 +54,7 @@ inputbar {
     border:           1px;
     border-color:     var(border-strong);
     border-radius:    0px;
-    font:             "JetBrainsMono Nerd Font 14";
+    font:             "CaskaydiaMono Nerd Font 14";
     text-color:       var(foreground);
 }
 
@@ -137,7 +137,7 @@ button {
     padding:          10px 14px;
     background-color: var(surface);
     border-radius:    12px;
-    font:             "JetBrainsMono Nerd Font 12";
+    font:             "CaskaydiaMono Nerd Font 12";
     border:           0px;
     horizontal-align: 0.50;
     vertical-align:   0.50;

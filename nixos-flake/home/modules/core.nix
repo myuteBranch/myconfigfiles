@@ -27,7 +27,6 @@
     highlight
     vivaldi
     zoom-us
-    citrix_workspace
   ];
 
   programs.zed-editor = {
@@ -44,5 +43,4 @@
       gopls
     ];
   };
-
 }

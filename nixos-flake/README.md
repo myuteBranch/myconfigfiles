@@ -1,282 +1,281 @@
 # NixOS Flake
 
-This directory contains the NixOS replacement for the workstation setup that was originally managed through the Ansible configuration in `../ansible`.
+This directory contains a modular NixOS + Home Manager flake for managing multiple NixOS hosts.
 
-The current flake is now structured as a modular NixOS + Home Manager configuration rather than a direct file-copy migration.
+The configuration is organized so that:
 
-## Goals
+- `flake.nix` defines hosts and wires shared arguments into NixOS and Home Manager
+- `hosts/<name>/configuration.nix` contains host-specific configuration
+- `modules/` contains reusable NixOS modules
+- `home/` contains reusable Home Manager modules and per-user entrypoints
 
-This flake preserves the main intent of the original Ansible roles while expressing them in a more idiomatic Nix way:
+## Overview
 
-- `common`
-  - shared CLI packages
-  - development toolchains
-  - default shell and core programs
-  - system-wide Nix and OpenSSH settings
-- `dev_user`
-  - primary user creation
-  - shell selection
-  - group membership
-  - host defaults
-- `rust`
-  - Rust tooling through Nix packages
-- `golang`
-  - Go tooling through Nix packages
-- `hyprland`
-  - Wayland desktop stack
-  - display/session services
-  - audio, Bluetooth, portals, and desktop packages
-  - user-facing desktop configuration through Home Manager
+The flake currently builds hosts through a helper in `flake.nix` and exports them under `nixosConfigurations`.
 
-## High-Level Structure
+Each host gets:
 
-- `flake.nix`
-  - flake entrypoint
-  - inputs
-  - host construction helper
-  - exported `nixosConfigurations`
-- `hosts/default/configuration.nix`
-  - host-specific enablement
-  - imports shared system modules
-  - turns on Docker and Hyprland
-- `modules/`
-  - reusable NixOS modules
-  - split into common system, desktop system, and host defaults
-- `home/`
-  - Home Manager configuration for the primary user
-  - split into smaller user-focused modules
+- a host-specific `configuration.nix`
+- Home Manager integrated as a NixOS module
+- shared arguments like `username`, `hostname`, and `stateVersion`
+- optional extra system modules through the host definition
 
-## Current Layout
+## Repository Structure
 
-### Top level
 
-- `flake.nix`
-- `README.md`
-- `hosts/default/configuration.nix`
+### Hosts
+
+Each host lives under `hosts/<name>/`.
+
+A host configuration is responsible for machine-specific concerns such as:
+
+- importing shared modules
+- importing `hardware-configuration.nix`
+- bootloader choice
+- kernel selection
+- filesystem-related settings
+- machine-specific desktop settings
+- Docker, gaming, laptop behavior, and other per-host toggles
+
+### System module structure
+
+The `modules/` directory is split into wrapper modules and focused submodules.
+
+#### Wrapper modules
+
 - `modules/common.nix`
+  - imports the common system baseline
 - `modules/hyprland.nix`
-- `modules/host-defaults.nix`
-- `home/myute.nix`
+  - imports the desktop/Hyprland-related modules
 
-### System modules
+These wrappers let a host enable a whole feature group with a single import.
 
-#### Common system modules
 
-- `modules/common/base.nix`
-- `modules/common/packages.nix`
-- `modules/common/programs.nix`
-- `modules/common/services.nix`
+### Home Manager structure
 
-`modules/common.nix` is a wrapper that imports these modules.
+The `home/` directory is split into per-user entrypoints and reusable user modules.
 
-Responsibilities:
+#### User entrypoints
 
-- `base.nix`
-  - Nix settings
-  - GC defaults
-  - documentation cache settings
-- `packages.nix`
-  - CLI packages
-  - build tools
-  - Go and Rust tooling
-- `programs.nix`
-  - `fish`
-  - `git`
-  - `neovim`
-  - default system shell
-- `services.nix`
-  - shared service defaults such as OpenSSH
+A user entrypoint typically:
 
-#### Desktop system modules
+- imports reusable Home Manager modules
+- sets `home.username`
+- sets `home.homeDirectory`
+- sets `home.stateVersion`
+- toggles optional user-level modules
 
-- `modules/desktop/hyprland-options.nix`
-- `modules/desktop/base.nix`
-- `modules/desktop/display.nix`
-- `modules/desktop/audio.nix`
-- `modules/desktop/desktop-packages.nix`
+## How hosts are defined
 
-`modules/hyprland.nix` is a wrapper that imports these modules.
+Host definitions live in `flake.nix`.
 
-Responsibilities:
+Each host entry provides values like:
 
-- `hyprland-options.nix`
-  - desktop enable option
-  - monitor and network interface options
-- `base.nix`
-  - shared Hyprland desktop baseline
-  - portals
-  - fonts
-  - session variables
-  - desktop helper programs
-- `display.nix`
-  - Hyprland enablement
-  - X server
-  - display manager
-  - default session
-- `audio.nix`
-  - NetworkManager
-  - Bluetooth
-  - Polkit
-  - PipeWire
-  - related desktop services
-- `desktop-packages.nix`
-  - desktop packages such as Waybar, Rofi, Alacritty, Dunst, and related tools
+- `hostname`
+- `configname`
+- `username`
+- `system`
+- `stateVersion`
 
-#### Host defaults
+The helper in `flake.nix` then builds a NixOS system from:
 
-- `modules/host-defaults.nix`
+- `./hosts/${configname}/configuration.nix`
+- Home Manager's NixOS module
+- an inline module that sets:
+  - `networking.hostName`
+  - `system.stateVersion`
+  - `home-manager.users.${username} = import ./home/${username}.nix`
 
-This contains the shared baseline for the current host:
+Because of that setup, host names and user entrypoint names matter:
 
-- hostname
-- timezone
-- locale
-- unfree setting
-- primary user
-- keyboard layout
-- common environment variables
-- `system.stateVersion`
+- `configname` must match a directory under `hosts/`
+- `username` must match a file under `home/` such as `home/<username>.nix`
 
-### Home Manager modules
+## How to add a new NixOS host
 
-- `home/modules/core.nix`
-- `home/modules/fish.nix`
-- `home/modules/shell-ui.nix`
-- `home/modules/gui.nix`
+To add a new host named `laptop`:
 
-`home/myute.nix` is a wrapper that imports these modules.
+### 1. Create the host directory
 
-Responsibilities:
+Create:
 
-- `core.nix`
-  - username
-  - home directory
-  - Home Manager state version
-  - session variables
-  - base user packages
-- `fish.nix`
-  - fish shell configuration
-  - abbreviations
-  - prompt helpers
-  - custom fish functions
-  - generated helper scripts
-- `shell-ui.nix`
-  - shell-oriented UX such as Starship
-- `gui.nix`
-  - graphical user configuration and generated desktop scripts
+- `hosts/laptop/configuration.nix`
 
-## Host Model
+Later, after installation, you will also place:
 
-`flake.nix` defines a small host-construction helper and currently exports one host:
+- `hosts/laptop/hardware-configuration.nix`
 
-- `default`
+### 2. Add the host entry to `flake.nix`
 
-The flake currently assumes:
+Add a new attribute under the `hosts` set in `flake.nix`, for example:
 
-- username: `myute`
-- system: `x86_64-linux`
-- state version: `24.11`
+- `laptop.hostname = "laptop"`
+- `laptop.configname = "laptop"`
+- `laptop.username = "myute"`
+- `laptop.system = "x86_64-linux"`
+- `laptop.stateVersion = "25.11"`
 
-The host definition lives in `flake.nix`, while host-specific enablement lives in `hosts/default/configuration.nix`.
+The important part is that:
 
-## Home Manager Integration
+- `configname = "laptop"` matches `hosts/laptop/configuration.nix`
+- `username` matches an existing `home/<username>.nix`
 
-Home Manager is integrated as a NixOS module inside the flake.
+### 3. Write `hosts/laptop/configuration.nix`
 
-That means:
+A typical host imports:
 
-- user configuration is applied together with the system rebuild
-- user packages come from the same `nixpkgs`
-- Home Manager receives the same shared arguments as the host configuration
+- `./hardware-configuration.nix`
+- `../../modules/common.nix`
+- `../../modules/host-defaults.nix`
 
-The Home Manager entry for the primary user is:
+Then optionally imports feature modules such as:
+
+- `../../modules/hyprland.nix`
+- `../../modules/gaming.nix`
+
+This file should contain host-only settings such as:
+
+- bootloader configuration
+- kernel choice
+- desktop enablement
+- monitor configuration
+- network interface name
+- laptop/server-specific behavior
+
+### 4. Ensure the Home Manager user entrypoint exists
+
+If your host uses:
+
+- `username = "myute"`
+
+then this file must exist:
 
 - `home/myute.nix`
 
-## Translation Notes from Ansible
+If you want a different primary user, create the matching file:
 
-The migration intentionally changes some implementation details while preserving behavior:
+- `home/<username>.nix`
 
-- imperative package installation became declarative package lists
-- Rust and Go are provided through Nix packages instead of installation scripts
-- user configuration is expressed through Home Manager modules instead of copying dotfiles
-- desktop helper scripts are generated from Nix where practical
-- Arch-specific package manager behavior such as `yay` is not reproduced
+## How to set up a new NixOS system with Btrfs
 
-## What Has Been Modernized
+These are practical steps for bringing up a fresh machine and then moving it into this flake.
 
-Compared with the initial migration state, the flake now has these improvements:
+Adjust device names to match your machine.
 
-- no copied home config tree remains
-- Home Manager config is split into focused modules
-- system config is split into focused modules
-- host defaults are extracted into a reusable module
-- desktop and shell behavior are mostly expressed declaratively
-- generated helper scripts are used instead of ad hoc copied scripts
+### 1. Boot the NixOS installer
 
-## Applying the Configuration
+Boot the NixOS ISO in UEFI mode.
 
-Typical workflow:
+Confirm your target disk, for example with:
 
-1. Enter the flake directory.
-2. Review the host and module settings.
-3. Rebuild with:
+- `lsblk`
+- `blkid`
 
-   `sudo nixos-rebuild switch --flake .#default`
+In the examples below, the target disk is assumed to be:
 
-Because Home Manager is integrated into the NixOS configuration, the user environment is applied as part of the same rebuild.
+- `/dev/nvme0n1`
 
-## Extending the Flake
+with partitions:
 
-### Add another host
+- `/dev/nvme0n1p1` = EFI
+- `/dev/nvme0n1p2` = Btrfs
 
-To add another host:
+### 2. Partition the disk
 
-1. create `hosts/<name>/configuration.nix`
-2. add an entry under `hosts` in `flake.nix`
-3. optionally add more host-specific modules to that host's `modules` list
+Create a GPT partition table with:
 
-### Parameterize defaults
+- an EFI system partition
+- a Btrfs partition for NixOS
 
-A natural next step would be parameterizing:
+One common approach is:
 
-- hostname
-- username
-- locale
-- timezone
-- monitor names
-- network interface
+- `p1` = EFI, a few hundred MiB
+- `p2` = the rest of the disk as Btrfs
 
-At the moment, these are still tailored to the current workstation.
+### 3. Format the partitions
 
-## Known Assumptions
+Format the EFI partition as FAT32:
 
-This flake currently assumes:
+```
+mkfs.fat -F 32 /dev/nvme0n1p1
+mkfs.btrfs -f /dev/nvme0n1p2
+```
+### 4. Create Btrfs subvolumes
+```
+mount /dev/nvme0n1p2 /mnt
+btrfs subvolume create /mnt/@root
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@nix
+btrfs subvolume create /mnt/@log
+umount /mnt
+```
 
-- the primary user is `myute`
-- the target platform is `x86_64-linux`
-- Hyprland is the intended desktop environment
-- Docker should be enabled on the default host
-- the default keyboard layout is `us` with `dvorak`
-- the desktop configuration is aimed at a personal workstation rather than a generic machine
+### 5. Mount the subvolumes
+```
+mount -o compress=zstd,subvol=@root /dev/nvme0n1p2 /mnt
+mkdir -p /mnt/{home,nix,var/log}
+mount -o compress=zstd,subvol=@home /dev/nvme0n1p2 /mnt/home
+mount -o compress=zstd,subvol=@nix /dev/nvme0n1p2 /mnt/nix
+mount -o compress=zstd,subvol=@log /dev/nvme0n1p2 /mnt/var/log
 
-## Suggested Next Improvements
+mkdir -p /mnt/boot
+mount /dev/nvme0n1p1 /mnt/boot
+```
 
-Potential follow-up work:
+### 6. generate the hardware configuration
 
-- parameterize hostname and username in `modules/host-defaults.nix`
-- add more hosts to validate the structure
-- extract desktop-specific constants into per-host options
-- reduce remaining large inline config blocks where native module options exist
-- add bootloader and hardware-specific system modules for a fully deployable machine profile
-- add secrets management if private values are introduced
+```
+nixos-generate-config --root /mnt
+```
+### 7. Copy `hardware-configuration.nix` into the flake
 
-## Summary
+On your flake repository, place it at:
 
-This flake is no longer just a rough Ansible translation. It is now a modular NixOS/Home Manager configuration with:
+- `hosts/<name>/hardware-configuration.nix`
 
-- wrapper modules at the top level
-- focused system submodules
-- focused Home Manager submodules
-- generated configuration where appropriate
-- a cleaner path toward reuse across multiple hosts
+For example:
+
+- `hosts/laptop/hardware-configuration.nix`
+
+Then make sure `hosts/laptop/configuration.nix` imports it.
+
+### 8. Confirm the generated Btrfs mount definitions
+
+Open the generated `hardware-configuration.nix` and verify that:
+
+- the filesystem type is `btrfs`
+- mount points are correct
+- subvolumes are referenced correctly
+- the EFI mount point matches your bootloader setup
+
+### 9. Install using the flake
+
+From the live installer environment, clone or copy this repository, enter `nixos-flake/`, and run:
+
+- `sudo nixos-install --flake .#<host>`
+
+Example:
+
+- `sudo nixos-install --flake .#laptop`
+
+That installs the system using your host definition from this flake.
+
+## How to run this flake on a new system
+
+Once the machine is installed and booted into the new system:
+
+1. clone this repository onto the machine
+2. enter `nixos-flake/`
+3. review the host config and any machine-specific settings
+4. rebuild with the matching host name
+
+Example:
+
+- `sudo nixos-rebuild switch --flake .#laptop`
+
+For existing hosts in this repository, that looks like:
+
+- `sudo nixos-rebuild switch --flake .#default`
+- `sudo nixos-rebuild switch --flake .#server`
+
+Because Home Manager is integrated into the NixOS configuration, the user environment is applied during the same rebuild.

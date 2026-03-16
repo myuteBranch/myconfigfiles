@@ -51,7 +51,7 @@ let
       text = cmd[update:1000] echo "$(date +"%H:%M")"
       color = rgb(d4be98)
       font_size = 72
-      font_family = JetBrainsMono Nerd Font
+      font_family = CaskaydiaMono Nerd Font
       position = 0, 140
       halign = center
       valign = center
@@ -62,7 +62,7 @@ let
       text = cmd[update:1000] echo "$(date +"%A, %B %d")"
       color = rgb(a89984)
       font_size = 20
-      font_family = JetBrainsMono Nerd Font
+      font_family = CaskaydiaMono Nerd Font
       position = 0, 80
       halign = center
       valign = center
