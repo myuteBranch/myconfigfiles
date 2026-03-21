@@ -1,5 +1,5 @@
 {
-  description = "Idiomatic NixOS flake migrated from the ansible workstation configuration";
+  description = "Idiomatic NixOS flake for my system configuration";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -76,7 +76,7 @@
         };
 
         server = {
-          hostname = "myute-nixos";
+          hostname = "myute-nixos-svr";
           configname = "server";
           username = "myuteBranch";
           system = "x86_64-linux";

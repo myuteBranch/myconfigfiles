@@ -4,12 +4,6 @@
 
   programs.home-manager.enable = true;
 
-  home.sessionVariables = {
-    EDITOR = "nvim";
-    VISUAL = "zeditor";
-    TERMINAL = "alacritty";
-  };
-
   home.packages = with pkgs; [
     pavucontrol
     nautilus

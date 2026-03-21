@@ -9,7 +9,11 @@
   users.users.${username} = {
     isNormalUser = true;
     description = username;
-    extraGroups = [ "wheel" "docker" "networkmanager" ];
+    extraGroups = [
+      "wheel"
+      "docker"
+      "networkmanager"
+    ];
     shell = pkgs.fish;
   };
 
@@ -18,12 +22,5 @@
     variant = "dvorak";
     options = "grp:alt_shift_toggle";
   };
-
-  environment.variables = {
-    EDITOR = "nvim";
-    VISUAL = "nvim";
-    TERMINAL = "alacritty";
-  };
-
 
 }

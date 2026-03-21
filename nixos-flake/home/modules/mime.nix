@@ -77,9 +77,6 @@
 
         # Directories
         "inode/directory" = fileManager;
-
-        # citrix
-        "application/x-citrix-ica" = [ "citrixapp.desktop" ];
       };
   };
 

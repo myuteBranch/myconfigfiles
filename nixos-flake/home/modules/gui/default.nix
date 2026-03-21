@@ -94,6 +94,7 @@ in
     ./waybar.nix
     ./hyprland.nix
     ./hypr-env.nix
+    ./systemd-user-env.nix
   ];
 
   home.packages = with pkgs; [
@@ -106,11 +107,7 @@ in
     libnotify
   ];
 
-  home.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
-    EDITOR = "nvim";
-    VISUAL = "zeditor";
-  };
+  home.sessionVariables = { };
 
   _module.args = {
     inherit

@@ -217,10 +217,11 @@ in
       # Floating windows
       windowrule = float on, match:tag floating-window
       windowrule = center on, match:tag floating-window
-      windowrule = size 875 600, match:tag floating-window
+      windowrule = size 1280 720, match:tag floating-window
 
       windowrule = tag +floating-window, match:class (xdg-desktop-portal-gtk|sublime_text|DesktopEditors|org.gnome.Nautilus), match:title ^(Open.*Files?|Open [F|f]older.*|Save.*Files?|Save.*As|Save|All Files|.*wants to [open|save].*|[C|c]hoose.*)
       windowrule = tag +floating-window, match:title ^(Select what to share)$
+      windowrule = tag +floating-window, match:class zoom
       windowrule = float on, match:class org.gnome.Calculator
 
       # Fullscreen screensave      # No transparency on media windows
@@ -234,7 +235,7 @@ in
       windowrule = idle_inhibit always, match:tag noidle
 
       # Browser types
-      windowrule = tag +chromium-based-browser, match:class ((google-)?[cC]hrom(e|ium)|[bB]rave-browser|[mM]icrosoft-edge|Vivaldi-stable|helium)
+      windowrule = tag +chromium-based-browser, match:class ((google-)?[cC]hrom(e|ium)|[bB]rave-browser|[mM]icrosoft-edge|[vV]ivaldi-stable|helium)
       windowrule = tag +firefox-based-browser, match:class ([fF]irefox|zen|librewolf)
       windowrule = tag -default-opacity, match:tag chromium-based-browser
       windowrule = tag -default-opacity, match:tag firefox-based-browser
