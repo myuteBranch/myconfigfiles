@@ -21,7 +21,7 @@
           configname,
           system ? "x86_64-linux",
           username ? "myute",
-          stateVersion ? "25.11",
+          stateVersion ? "26.05",
           modules ? [ ],
         }:
         lib.nixosSystem {
@@ -72,7 +72,7 @@
           configname = "default";
           username = "myute";
           system = "x86_64-linux";
-          stateVersion = "25.11";
+          stateVersion = "26.05";
         };
 
         server = {
@@ -80,7 +80,7 @@
           configname = "server";
           username = "myuteBranch";
           system = "x86_64-linux";
-          stateVersion = "25.11";
+          stateVersion = "26.05";
         };
       };
     in

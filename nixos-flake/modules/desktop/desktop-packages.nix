@@ -16,13 +16,9 @@ in
       hypridle
       waybar
       rofi
-      wl-clipboard
       dunst
       lxappearance
       alacritty
-      swaybg
-      swayosd
-      nautilus
       grim
       slurp
       gpu-screen-recorder

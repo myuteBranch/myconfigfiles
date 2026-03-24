@@ -16,11 +16,11 @@
     libnotify
     libqalculate
     ripgrep
-    fzf
     just
     highlight
     vivaldi
     zoom-us
+    claude-code
   ];
 
   programs.zed-editor = {
