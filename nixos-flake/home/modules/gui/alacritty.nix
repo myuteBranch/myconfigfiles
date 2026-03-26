@@ -6,33 +6,33 @@
     settings = {
       colors = {
         primary = {
-          background = "0x1d2021";
-          foreground = "0xd4be98";
+          background = "0x000000";
+          foreground = "0xffffff";
         };
 
         normal = {
-          black = "0x32302f";
-          red = "0xea6962";
-          green = "0xa9b665";
-          yellow = "0xd8a657";
-          blue = "0x7daea3";
-          magenta = "0xd3869b";
-          cyan = "0x89b482";
-          white = "0xd4be98";
+          black = "0x000000";
+          red = "0xff5f87";
+          green = "0x87ff87";
+          yellow = "0xffff87";
+          blue = "0x5fafff";
+          magenta = "0xd787ff";
+          cyan = "0x87ffff";
+          white = "0xffffff";
         };
 
         bright = {
-          black = "0x32302f";
-          red = "0xea6962";
-          green = "0xa9b665";
-          yellow = "0xd8a657";
-          blue = "0x7daea3";
-          magenta = "0xd3869b";
-          cyan = "0x89b482";
-          white = "0xd4be98";
+          black = "0x444444";
+          red = "0xff87af";
+          green = "0xb2ffb2";
+          yellow = "0xffffb2";
+          blue = "0x87cfff";
+          magenta = "0xe3afff";
+          cyan = "0xb2ffff";
+          white = "0xffffff";
         };
 
-        cursor.cursor = "0xec5d2a";
+        cursor.cursor = "0xffff00";
       };
 
       env.TERM = "xterm-256color";

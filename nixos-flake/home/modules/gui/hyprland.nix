@@ -96,7 +96,7 @@ in
         kb_variant = "dvorak,";
         kb_options = "grp:alt_shift_toggle";
         follow_mouse = 1;
-        sensitivity = 0;
+        sensitivity = -0.5;
 
         touchpad = {
           natural_scroll = true;
@@ -188,10 +188,17 @@ in
         "$mainMod SHIFT, E, exit,"
         "$mainMod, period, layoutmsg, move +col"
         "$mainMod, comma, layoutmsg, move -col"
-        "$mainMod SHIFT, period, layoutmsg, swapcol r"
-        "$mainMod SHIFT, comma, layoutmsg, swapcol l"
+        # Col resize
         "$mainMod CTRL, period, layoutmsg, colresize +conf"
         "$mainMod CTRL, comma, layoutmsg, colresize -conf"
+        # swap columns
+        "$mainMod SHIFT, period, layoutmsg, swapcol r"
+        "$mainMod SHIFT, comma, layoutmsg, swapcol l"
+        # move window into next column as a stack
+        "$mainMod CTRL, right, exec, hyprctl --batch \"dispatch movewindow r ; dispatch movewindow u\""
+        "$mainMod CTRL, left, exec, hyprctl --batch \"dispatch movewindow l ; dispatch movewindow d\""
+        # promote window form stack into own column
+        "$mainMod CTRL, p, layoutmsg, promote"
       ];
 
       bindm = [
@@ -207,7 +214,7 @@ in
       windowrule = center on, match:class steam, match:title Steam
       windowrule = tag -default-opacity, match:class steam.*
       windowrule = opacity 1 1, match:class steam.*
-      windowrule = size 1100 700, match:class steam, match:title Steam
+      windowrule = size 1280 720, match:class steam, match:title Steam
       windowrule = size 460 800, match:class steam, match:title Friends List
       windowrule = idle_inhibit fullscreen, match:class steam
 
@@ -234,6 +241,17 @@ in
       # Prevent idle while open
       windowrule = idle_inhibit always, match:tag noidle
 
+      # Picture-in-picture overlays
+      windowrule = tag +pip, match:title (Picture.?in.?[Pp]icture)
+      windowrule = tag -default-opacity, match:tag pip
+      windowrule = float on, match:tag pip
+      windowrule = pin on, match:tag pip
+      windowrule = size 600 338, match:tag pip
+      windowrule = keep_aspect_ratio on, match:tag pip
+      windowrule = border_size 0, match:tag pip
+      windowrule = opacity 1 1, match:tag pip
+      windowrule = move (monitor_w-window_w-40) (monitor_h*0.04), match:tag pip
+
       # Browser types
       windowrule = tag +chromium-based-browser, match:class ((google-)?[cC]hrom(e|ium)|[bB]rave-browser|[mM]icrosoft-edge|[vV]ivaldi-stable|helium)
       windowrule = tag +firefox-based-browser, match:class ([fF]irefox|zen|librewolf)
@@ -250,6 +268,9 @@ in
       # Only a subtle opacity change, but not for video sites
       windowrule = opacity 1.0 0.97, match:tag chromium-based-browser
       windowrule = opacity 1.0 0.97, match:tag firefox-based-browser
+
+      # Fix some dragging issues with XWayland
+      windowrule = no_focus on, match:class ^$, match:title ^$, match:xwayland 1, match:float 1, match:fullscreen 0, match:pin 0
     '';
   };
   _module.args = {

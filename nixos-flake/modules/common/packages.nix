@@ -14,10 +14,8 @@ let
     jq
     jujutsu
     less
-    neovim
     openssh
     starship
-    tmux
     vim
     wget
   ];
@@ -37,12 +35,7 @@ let
     xz
   ];
 
-  languagePackages = with pkgs; [
-    go
-    rustup
-  ];
-
 in
 {
-  environment.systemPackages = cliPackages ++ buildPackages ++ languagePackages;
+  environment.systemPackages = cliPackages ++ buildPackages;
 }

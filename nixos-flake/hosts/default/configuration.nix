@@ -32,7 +32,7 @@
         scale = 1;
       }
     ];
-    networkInterface = "wlp9s0";
+    networkInterface = "enp8s0";
   };
 
   # this is for citrix workspaces

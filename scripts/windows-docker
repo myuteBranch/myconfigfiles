@@ -1,0 +1,253 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+COMPOSE_FILE="$HOME/.config/windows/docker-compose.yml"
+CONTAINER_NAME="windows-docker"
+
+compose_cmd() {
+  if command -v docker-compose >/dev/null 2>&1; then
+    docker-compose "$@"
+  else
+    docker compose "$@"
+  fi
+}
+
+rdp_cmd() {
+  if command -v xfreerdp3 >/dev/null 2>&1; then
+    xfreerdp3 "$@"
+  else
+    xfreerdp "$@"
+  fi
+}
+
+require_command() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    echo "Required command not found: $1" >&2
+    exit 1
+  fi
+}
+
+check_prerequisites() {
+  require_command docker
+  require_command grep
+  require_command sed
+
+  if ! command -v docker-compose >/dev/null 2>&1 && ! docker compose version >/dev/null 2>&1; then
+    echo "docker compose or docker-compose is required" >&2
+    exit 1
+  fi
+
+  if ! command -v xfreerdp3 >/dev/null 2>&1 && ! command -v xfreerdp >/dev/null 2>&1; then
+    echo "xfreerdp3 or xfreerdp is required for RDP launch" >&2
+    exit 1
+  fi
+
+  if [[ ! -e /dev/kvm ]]; then
+    echo "/dev/kvm is required for the Windows container" >&2
+    exit 1
+  fi
+}
+
+install_windows() {
+  check_prerequisites
+
+  mkdir -p "$HOME/.config/windows"
+  mkdir -p "$HOME/.windows"
+  mkdir -p "$HOME/Windows"
+
+  local ram_size="8G"
+  local cpu_cores="4"
+  local disk_size="64G"
+  local username="docker"
+  local password="admin"
+  local timezone
+
+  timezone="$(timedatectl show -p Timezone --value 2>/dev/null || true)"
+  timezone="${timezone:-UTC}"
+
+  read -r -p "RAM size for Windows VM [${ram_size}]: " input_ram
+  ram_size="${input_ram:-$ram_size}"
+
+  read -r -p "CPU cores for Windows VM [${cpu_cores}]: " input_cpu
+  cpu_cores="${input_cpu:-$cpu_cores}"
+
+  read -r -p "Disk size for Windows VM [${disk_size}]: " input_disk
+  disk_size="${input_disk:-$disk_size}"
+
+  read -r -p "Windows username [${username}]: " input_user
+  username="${input_user:-$username}"
+
+  read -r -s -p "Windows password [${password}]: " input_pass
+  echo
+  password="${input_pass:-$password}"
+
+  cat > "$COMPOSE_FILE" <<EOF
+services:
+  windows:
+    image: dockurr/windows
+    container_name: $CONTAINER_NAME
+    environment:
+      VERSION: "11"
+      RAM_SIZE: "$ram_size"
+      CPU_CORES: "$cpu_cores"
+      DISK_SIZE: "$disk_size"
+      USERNAME: "$username"
+      PASSWORD: "$password"
+      TZ: "$timezone"
+      ARGUMENTS: "-rtc base=localtime,clock=host,driftfix=slew"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 127.0.0.1:8006:8006
+      - 127.0.0.1:3389:3389/tcp
+      - 127.0.0.1:3389:3389/udp
+    volumes:
+      - $HOME/.windows:/storage
+      - $HOME/Windows:/shared
+    restart: unless-stopped
+    stop_grace_period: 2m
+EOF
+
+  echo "Wrote $COMPOSE_FILE"
+  echo "Run 'windows-docker launch' to start it"
+}
+
+launch_windows() {
+  check_prerequisites
+
+  if [[ ! -f "$COMPOSE_FILE" ]]; then
+    echo "Windows container is not configured. Run: windows-docker install" >&2
+    exit 1
+  fi
+
+  local win_user
+  local win_pass
+  local wait_count=0
+
+  win_user="$(grep 'USERNAME:' "$COMPOSE_FILE" | sed 's/.*USERNAME: "\(.*\)"/\1/' || true)"
+  win_pass="$(grep 'PASSWORD:' "$COMPOSE_FILE" | sed 's/.*PASSWORD: "\(.*\)"/\1/' || true)"
+
+  win_user="${win_user:-docker}"
+  win_pass="${win_pass:-admin}"
+
+  echo "Starting Windows container..."
+  compose_cmd -f "$COMPOSE_FILE" up -d
+
+  echo "Waiting for Windows to become ready for RDP..."
+  until docker logs "$CONTAINER_NAME" 2>&1 | grep -qi "windows started successfully"; do
+    sleep 2
+    wait_count=$((wait_count + 1))
+
+    if (( wait_count > 60 )); then
+      echo "Timed out waiting for Windows to start" >&2
+      echo "Web UI: http://127.0.0.1:8006" >&2
+      exit 1
+    fi
+  done
+
+  echo
+  echo "Launching RDP session..."
+  rdp_cmd \
+    /u:"$win_user" \
+    /p:"$win_pass" \
+    /v:127.0.0.1:3389 \
+    /grab-keyboard \
+    /sound \
+    /microphone \
+    /clipboard \
+    /cert:ignore \
+    /title:"Windows Docker" \
+    /dynamic-resolution \
+    /gfx:AVC444
+}
+
+stop_windows() {
+  if [[ ! -f "$COMPOSE_FILE" ]]; then
+    echo "Windows container is not configured." >&2
+    exit 1
+  fi
+
+  echo "Stopping Windows container..."
+  compose_cmd -f "$COMPOSE_FILE" down
+}
+
+status_windows() {
+  if [[ ! -f "$COMPOSE_FILE" ]]; then
+    echo "Windows container is not configured."
+    echo "Run: windows-docker install"
+    exit 1
+  fi
+
+  local status
+  status="$(docker inspect --format '{{.State.Status}}' "$CONTAINER_NAME" 2>/dev/null || true)"
+
+  if [[ -z "$status" ]]; then
+    echo "Windows container is not created yet."
+    echo "Run: windows-docker launch"
+    return 0
+  fi
+
+  echo "Container status: $status"
+  if [[ "$status" == "running" ]]; then
+    echo "Web UI: http://127.0.0.1:8006"
+    echo "RDP:    127.0.0.1:3389"
+  fi
+}
+
+remove_windows() {
+  if [[ -f "$COMPOSE_FILE" ]]; then
+    compose_cmd -f "$COMPOSE_FILE" down >/dev/null 2>&1 || true
+    rm -f "$COMPOSE_FILE"
+  fi
+
+  echo "Removed Windows container config"
+  echo "Data directories were kept:"
+  echo "  $HOME/.windows"
+  echo "  $HOME/Windows"
+}
+
+show_usage() {
+  cat <<'EOF'
+Usage: windows-docker [install|launch|start|stop|down|status|remove|help]
+
+Commands:
+  install   Create the docker compose config for the Windows container
+  launch    Start the container and connect with RDP
+  start     Alias for launch
+  stop      Stop the running container
+  down      Alias for stop
+  status    Show current container status
+  remove    Stop and remove the container config
+  help      Show this help message
+EOF
+}
+
+case "${1:-}" in
+  install)
+    install_windows
+    ;;
+  launch|start)
+    launch_windows
+    ;;
+  stop|down)
+    stop_windows
+    ;;
+  status)
+    status_windows
+    ;;
+  remove)
+    remove_windows
+    ;;
+  help|"")
+    show_usage
+    ;;
+  *)
+    echo "Unknown command: $1" >&2
+    echo >&2
+    show_usage >&2
+    exit 1
+    ;;
+esac

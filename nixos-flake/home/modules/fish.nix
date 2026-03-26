@@ -10,6 +10,8 @@ let
     set -g default-terminal xterm-256color
     set -g status-keys vi
 
+    set-option -g focus-events on
+    set-option -g default-terminal "screen-256color"
 
     # use C-j and C-f for the prefix.
     set-option -g prefix C-b
@@ -124,7 +126,7 @@ let
     set -g status-left-length 40
     set -g status-right-length 80
 
-    set -g status-left "#[fg=#888888,bg=#0f0f0f] #S #[default]"
+    set -g status-left "#[fg=#888888,bg=#0f0f0f] #S#{?window_zoomed_flag, #[fg=#e6c547]ZOOM#[default],} #[default]"
     set -g status-right "#[fg=#555555,bg=#0f0f0f] %Y-%m-%d #[fg=#888888]| %H:%M #[default]"
 
     # Window list style
@@ -261,13 +263,10 @@ in
         ${tmuxInitScript} $argv
       '';
 
-      update_all = ''
-        nix flake update ~/src/myconfigfiles/nixos-flake
-        sudo nixos-rebuild switch --flake ~/src/myconfigfiles/nixos-flake#default
-        home-manager generations >/dev/null 2>/dev/null
-        fish_update_completions
-        fc-cache -frv
+      windows-docker = ''
+        bash "$HOME/src/myconfigfiles/scripts/windows-docker" $argv
       '';
+
     };
   };
 
