@@ -14,7 +14,6 @@ in
       hyprlock
       hyprpicker
       hypridle
-      waybar
       rofi
       dunst
       lxappearance

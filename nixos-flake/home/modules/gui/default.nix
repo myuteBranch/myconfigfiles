@@ -24,7 +24,7 @@ let
     monitor: "${monitor.name}, ${monitor.resolution}, ${monitor.position}, ${toString monitor.scale}"
   ) monitors;
 
-  powermenuScript = pkgs.writeShellScript "waybar-powermenu" ''
+  powermenuScript = pkgs.writeShellScript "powermenu" ''
     lock=" Lock"
     logout=" Logout"
     shutdown=" Shutdown"
@@ -91,7 +91,7 @@ in
     ./alacritty.nix
     ./rofi.nix
     ./dunst.nix
-    ./waybar.nix
+    ./ashell.nix
     ./hyprland.nix
     ./hypr-env.nix
     ./systemd-user-env.nix
