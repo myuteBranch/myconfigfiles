@@ -9,6 +9,8 @@ let
     # Initial setup
     set -g default-terminal xterm-256color
     set -g status-keys vi
+    set -g extended-keys on
+    set -g extended-keys-format csi-u
 
     set-option -g focus-events on
     set-option -g default-terminal "screen-256color"
@@ -257,6 +259,15 @@ in
 
       fish_user_key_bindings = ''
         ${pkgs.fzf}/bin/fzf --fish | source
+      '';
+
+      tm = ''
+        if count $argv > /dev/null
+          set -f target_path (realpath $argv[1])
+          ${tmuxInitScript} $target_path
+        else
+          echo "Please provide a directory path"
+        end
       '';
 
       tmux-init = ''

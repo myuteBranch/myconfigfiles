@@ -21,6 +21,8 @@
     gopls
     lua-language-server
     stylua
+    mpv
+    kitty
   ];
 
   programs.zed-editor = {

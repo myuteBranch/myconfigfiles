@@ -111,16 +111,6 @@
           key = "Copy";
         }
         {
-          action = "ClearLogNotice";
-          key = "L";
-          mods = "Control";
-        }
-        {
-          chars = "\\f";
-          key = "L";
-          mods = "Control";
-        }
-        {
           action = "ScrollPageUp";
           key = "PageUp";
           mode = "~Alt";

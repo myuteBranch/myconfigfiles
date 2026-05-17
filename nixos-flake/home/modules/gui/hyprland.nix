@@ -73,6 +73,7 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     systemd.enable = true;
+    configType = "hyprlang";
 
     settings = {
       monitor = hyprlandMonitors;
@@ -87,6 +88,9 @@ in
         "blueman-applet"
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
         "systemctl --user import-environment $(env | cut -d'=' -f 1)"
+        "hyprctl dispatch exec '[workspace 1 silent] vivaldi'"
+        "hyprctl dispatch exec '[workspace 2 silent] $term'"
+        "hyprctl dispatch exec '[workspace 4 silent] steam'"
       ];
 
       source = [ "~/.config/hypr/env.conf" ];
@@ -206,7 +210,6 @@ in
         "$mainMod, mouse:273, resizewindow"
       ];
 
-      submap = "reset";
     };
 
     extraConfig = ''
