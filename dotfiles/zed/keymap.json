@@ -10,13 +10,13 @@
     "context": "Workspace",
     "bindings": {
       // "space space": "file_finder::Toggle"
-    }
+    },
   },
   {
     "context": "Editor && vim_mode == insert",
     "bindings": {
       // "j k": "vim::NormalBefore"
-    }
+    },
   },
   {
     "context": "Editor && vim_mode == normal",
@@ -25,14 +25,14 @@
       "shift-l": "pane::ActivateNextItem",
       "space e": "workspace::ToggleLeftDock",
       "space s g": "workspace::NewSearch",
-      "space space": "file_finder::Toggle"
-    }
+      "space space": "file_finder::Toggle",
+    },
   },
   {
     "context": "Editor && vim_mode == visual",
     "bindings": {
       "shift-k": "editor::MoveLineUp",
-      "shift-j": "editor::MoveLineDown"
-    }
-  }
+      "shift-j": "editor::MoveLineDown",
+    },
+  },
 ]

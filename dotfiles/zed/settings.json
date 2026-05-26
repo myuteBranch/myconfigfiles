@@ -8,27 +8,26 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
   "agent": {
-    "default_profile": "ask",
+    "default_profile": "minimal",
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "gpt-4.1"
+      "provider": "openrouter",
+      "model": "openai/gpt-5.4",
+      "enable_thinking": true
     },
+    "favorite_models": [],
     "model_parameters": []
   },
-  "features": {
-    "edit_prediction_provider": "copilot"
-  },
-  "icon_theme": {
-    "mode": "dark",
-    "light": "Zed (Default)",
-    "dark": "Zed (Default)"
-  },
   "vim_mode": true,
+  "ui_font_family": "CaskaydiaCove Nerd Font Mono",
   "ui_font_size": 16,
+  "buffer_font_family": "JetBrainsMono Nerd Font Mono",
   "buffer_font_size": 15,
+  "terminal": {
+    "font_family": "CaskaydiaCove Nerd Font Mono",
+  },
   "theme": {
-    "mode": "dark",
+    "mode": "system",
     "light": "One Light",
-    "dark": "Ayu Dark"
-  }
+    "dark": "One Dark",
+  },
 }

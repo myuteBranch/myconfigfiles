@@ -1,9 +1,0 @@
-#!/usr/bin/env sh
-set -eu
-
-# Launch preferred login apps for KDE session
-( sleep 3; "{{ user_home }}/.local/bin/vivaldi-share" ) >/dev/null 2>&1 &
-( sleep 4; alacritty ) >/dev/null 2>&1 &
-{% if gaming_amd_enabled | bool %}
-( sleep 5; steam ) >/dev/null 2>&1 &
-{% endif %}
