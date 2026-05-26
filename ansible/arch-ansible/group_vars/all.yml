@@ -1,0 +1,176 @@
+---
+timezone: America/Chicago
+locale: en_US.UTF-8
+xkb_layout: us
+xkb_variant: dvorak
+xkb_options: grp:alt_shift_toggle
+
+user_config_backup_existing: true
+
+base_packages:
+  - base-devel
+  - bat
+  - btop
+  - curl
+  - difftastic
+  - eza
+  - fastfetch
+  - fish
+  - fzf
+  - git
+  - jq
+  - less
+  - openssh
+  - starship
+  - vim
+  - wget
+  - binutils
+  - file
+  - gcc
+  - make
+  - sed
+  - tar
+  - gzip
+  - patch
+  - pkgconf
+  - unzip
+  - which
+  - xz
+  - neovim
+  - man-db
+  - man-pages
+
+kde_system_packages:
+  - plasma-desktop
+  - plasma-workspace
+  - kde-cli-tools
+  - kde-gtk-config
+  - xdg-desktop-portal
+  - xdg-desktop-portal-kde
+  - sddm
+  - dolphin
+  - konsole
+  - spectacle
+  - ark
+  - gwenview
+  - okular
+  - alacritty
+  - pavucontrol
+  - bluedevil
+  - bluez
+  - bluez-utils
+  - pipewire
+  - pipewire-alsa
+  - pipewire-jack
+  - pipewire-pulse
+  - wireplumber
+  - gvfs
+  - udisks2
+  - upower
+  - dconf
+  - network-manager-applet
+  - kscreen
+  - noto-fonts
+  - noto-fonts-emoji
+  - ttf-jetbrains-mono-nerd
+  - ttf-meslo-nerd
+  - ttf-cascadia-code-nerd
+  - bibata-cursor-theme
+  - breeze
+  - breeze-gtk
+  - kvantum
+
+gaming_packages:
+  - steam
+  - mangohud
+  - vulkan-tools
+  - vulkan-radeon
+  - lib32-vulkan-radeon
+  - radeontop
+  - goverlay
+  - protontricks
+  - winetricks
+  - gamescope
+  - gamemode
+
+user_pacman_packages:
+  - libqalculate
+  - just
+  - freerdp
+  - go
+  - rustup
+  - tree-sitter
+  - nodejs
+  - nil
+  - nixd
+  - alejandra
+  - gopls
+  - lua-language-server
+  - stylua
+  - mpv
+  - ripgrep
+  - highlight
+  - tmux
+  - zed
+
+user_aur_packages:
+  - vivaldi
+  - jujutsu
+
+citrix_aur_packages:
+  - citrix_workspace
+
+system_environment:
+  EDITOR: nvim
+  VISUAL: zeditor
+  TERMINAL: alacritty
+  XDG_SESSION_TYPE: wayland
+  XDG_CURRENT_DESKTOP: KDE
+  XDG_SESSION_DESKTOP: KDE
+  DESKTOP_SESSION: plasma
+  GDK_BACKEND: wayland,x11,*
+  QT_QPA_PLATFORM: wayland;xcb
+  QT_STYLE_OVERRIDE: kvantum
+  SDL_VIDEODRIVER: wayland
+  MOZ_ENABLE_WAYLAND: "1"
+  ELECTRON_OZONE_PLATFORM_HINT: wayland
+  OZONE_PLATFORM: wayland
+  XCURSOR_SIZE: "24"
+
+mime_defaults:
+  text/html: [vivaldi-stable.desktop]
+  application/xhtml+xml: [vivaldi-stable.desktop]
+  application/xml: [vivaldi-stable.desktop]
+  text/xml: [vivaldi-stable.desktop]
+  application/rss+xml: [vivaldi-stable.desktop]
+  application/atom+xml: [vivaldi-stable.desktop]
+  x-scheme-handler/http: [vivaldi-stable.desktop]
+  x-scheme-handler/https: [vivaldi-stable.desktop]
+  x-scheme-handler/about: [vivaldi-stable.desktop]
+  x-scheme-handler/unknown: [vivaldi-stable.desktop]
+  text/plain: [dev.zed.Zed.desktop]
+  text/markdown: [dev.zed.Zed.desktop]
+  text/csv: [dev.zed.Zed.desktop]
+  application/json: [dev.zed.Zed.desktop]
+  application/pdf: [okularApplication_pdf.desktop]
+  image/png: [org.kde.gwenview.desktop]
+  image/jpeg: [org.kde.gwenview.desktop]
+  image/gif: [org.kde.gwenview.desktop]
+  image/webp: [org.kde.gwenview.desktop]
+  image/svg+xml: [vivaldi-stable.desktop]
+  audio/mpeg: [mpv.desktop]
+  audio/flac: [mpv.desktop]
+  audio/ogg: [mpv.desktop]
+  audio/wav: [mpv.desktop]
+  video/mp4: [mpv.desktop]
+  video/x-matroska: [mpv.desktop]
+  video/webm: [mpv.desktop]
+  video/quicktime: [mpv.desktop]
+  video/x-msvideo: [mpv.desktop]
+  application/zip: [org.kde.ark.desktop]
+  application/x-tar: [org.kde.ark.desktop]
+  application/x-7z-compressed: [org.kde.ark.desktop]
+  application/x-rar: [org.kde.ark.desktop]
+  application/gzip: [org.kde.ark.desktop]
+  application/x-bzip2: [org.kde.ark.desktop]
+  inode/directory: [org.kde.dolphin.desktop]

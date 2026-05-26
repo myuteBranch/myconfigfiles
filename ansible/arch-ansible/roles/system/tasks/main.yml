@@ -1,0 +1,291 @@
+---
+- name: Ensure hostname matches nix host profile
+  ansible.builtin.hostname:
+    name: "{{ arch_hostname }}"
+
+- name: Enable multilib repository (required by Steam)
+  ansible.builtin.blockinfile:
+    path: /etc/pacman.conf
+    marker: "# {mark} ANSIBLE MANAGED MULTILIB"
+    block: |
+      [multilib]
+      Include = /etc/pacman.d/mirrorlist
+  when: gaming_amd_enabled | bool
+
+- name: Remove multilib repository block when gaming is disabled
+  ansible.builtin.blockinfile:
+    path: /etc/pacman.conf
+    marker: "# {mark} ANSIBLE MANAGED MULTILIB"
+    state: absent
+  when: not (gaming_amd_enabled | bool)
+
+- name: Refresh pacman cache and upgrade
+  community.general.pacman:
+    update_cache: true
+    upgrade: true
+
+- name: Install base system packages
+  community.general.pacman:
+    name: "{{ base_packages }}"
+    state: present
+
+- name: Install desktop (KDE Plasma) packages
+  community.general.pacman:
+    name: "{{ kde_system_packages }}"
+    state: present
+  when: kde_enabled | bool
+
+- name: Ensure NetworkManager daemon package is installed
+  community.general.pacman:
+    name: networkmanager
+    state: present
+  when: kde_enabled | bool
+
+- name: Ensure Docker package is installed when requested
+  community.general.pacman:
+    name: docker
+    state: present
+  when: docker_enabled | bool
+
+- name: Install gaming packages
+  community.general.pacman:
+    name: "{{ gaming_packages }}"
+    state: present
+  when: gaming_amd_enabled | bool
+
+- name: Install user packages from pacman
+  community.general.pacman:
+    name: "{{ user_pacman_packages }}"
+    state: present
+
+- name: Ensure required local groups exist
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - wheel
+    - networkmanager
+
+- name: Ensure docker group exists when docker is enabled
+  ansible.builtin.group:
+    name: docker
+    state: present
+  when: docker_enabled | bool
+
+- name: Compute effective user groups
+  ansible.builtin.set_fact:
+    effective_user_groups: "{{ [ 'wheel', 'networkmanager' ] + ([ 'docker' ] if (docker_enabled | bool) else []) }}"
+
+- name: Create primary user
+  ansible.builtin.user:
+    name: "{{ arch_username }}"
+    shell: /usr/bin/fish
+    groups: "{{ effective_user_groups }}"
+    append: true
+    create_home: true
+
+- name: Ensure wheel has sudo privileges
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/10-wheel
+    mode: "0440"
+    content: |
+      %wheel ALL=(ALL:ALL) ALL
+
+- name: Configure timezone
+  community.general.timezone:
+    name: "{{ timezone }}"
+
+- name: Ensure locale present in locale.gen
+  ansible.builtin.lineinfile:
+    path: /etc/locale.gen
+    regexp: '^#?{{ locale | regex_escape }}\s+UTF-8'
+    line: "{{ locale }} UTF-8"
+  notify: generate locales
+
+- name: Set default locale
+  ansible.builtin.copy:
+    dest: /etc/locale.conf
+    mode: "0644"
+    content: |
+      LANG={{ locale }}
+
+- name: Ensure X11 config directory exists
+  ansible.builtin.file:
+    path: /etc/X11/xorg.conf.d
+    state: directory
+    mode: "0755"
+
+- name: Configure X11 keyboard layout
+  ansible.builtin.copy:
+    dest: /etc/X11/xorg.conf.d/00-keyboard.conf
+    mode: "0644"
+    content: |
+      Section "InputClass"
+          Identifier "system-keyboard"
+          MatchIsKeyboard "on"
+          Option "XkbLayout" "{{ xkb_layout }}"
+          Option "XkbVariant" "{{ xkb_variant }}"
+          Option "XkbOptions" "{{ xkb_options }}"
+      EndSection
+
+- name: Ensure system environment drop-in directory exists
+  ansible.builtin.file:
+    path: /etc/environment.d
+    state: directory
+    mode: "0755"
+
+- name: Configure system environment variables drop-in
+  ansible.builtin.copy:
+    dest: /etc/environment.d/99-arch-ansible.conf
+    mode: "0644"
+    content: |
+      {% for k, v in system_environment.items() %}
+      {{ k }}={{ v }}
+      {% endfor %}
+      {% if gaming_amd_enabled | bool %}
+      AMD_VULKAN_ICD=RADV
+      {% endif %}
+
+- name: Ensure SDDM config directory exists
+  ansible.builtin.file:
+    path: /etc/sddm.conf.d
+    state: directory
+    mode: "0755"
+  when: kde_enabled | bool
+
+- name: Configure SDDM for Plasma Wayland session
+  ansible.builtin.copy:
+    dest: /etc/sddm.conf.d/10-plasma-wayland.conf
+    mode: "0644"
+    content: |
+      [General]
+      DisplayServer=wayland
+
+      [Wayland]
+      CompositorCommand=kwin_wayland --drm --no-lockscreen --no-global-shortcuts --locale1
+
+      [Autologin]
+      Relogin=false
+
+      [Users]
+      MaximumUid=60000
+      MinimumUid=1000
+  when: kde_enabled | bool
+
+- name: Ensure xdg-desktop-portal config directory exists
+  ansible.builtin.file:
+    path: /etc/xdg/xdg-desktop-portal
+    state: directory
+    mode: "0755"
+  when: kde_enabled | bool
+
+- name: Prefer KDE portal backend
+  ansible.builtin.copy:
+    dest: /etc/xdg/xdg-desktop-portal/portals.conf
+    mode: "0644"
+    content: |
+      [preferred]
+      default=kde
+      org.freedesktop.impl.portal.FileChooser=kde
+      org.freedesktop.impl.portal.Screenshot=kde
+      org.freedesktop.impl.portal.ScreenCast=kde
+  when: kde_enabled | bool
+
+- name: Ensure logind drop-in directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/logind.conf.d
+    state: directory
+    mode: "0755"
+  when: logind_lid_ignore | bool
+
+- name: Configure lid switch behavior for laptop profile
+  ansible.builtin.copy:
+    dest: /etc/systemd/logind.conf.d/99-lid.conf
+    mode: "0644"
+    content: |
+      [Login]
+      HandleLidSwitch=ignore
+      HandleLidSwitchDocked=ignore
+  when: logind_lid_ignore | bool
+  notify: reload systemd
+
+- name: Remove lid override when not requested
+  ansible.builtin.file:
+    path: /etc/systemd/logind.conf.d/99-lid.conf
+    state: absent
+  when: not (logind_lid_ignore | bool)
+  notify: reload systemd
+
+- name: Ensure OpenSSH enabled by default
+  ansible.builtin.systemd_service:
+    name: sshd
+    enabled: true
+    state: started
+
+- name: Enable Docker when requested
+  ansible.builtin.systemd_service:
+    name: docker
+    enabled: true
+    state: started
+  when: docker_enabled | bool
+
+- name: Enable core desktop services
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - NetworkManager
+    - bluetooth
+    - sddm
+  when: kde_enabled | bool
+
+- name: Ensure yay prerequisites are installed
+  community.general.pacman:
+    name:
+      - git
+      - base-devel
+    state: present
+
+- name: Check whether yay is installed
+  ansible.builtin.stat:
+    path: /usr/bin/yay
+  register: yay_stat
+
+- name: Build and install yay
+  when: not yay_stat.stat.exists
+  block:
+    - name: Clone yay PKGBUILD
+      ansible.builtin.git:
+        repo: https://aur.archlinux.org/yay.git
+        dest: "/tmp/yay-build-{{ arch_username }}"
+        force: true
+      become: true
+      become_user: "{{ arch_username }}"
+
+    - name: Build yay package
+      ansible.builtin.command: makepkg -si --noconfirm
+      args:
+        chdir: "/tmp/yay-build-{{ arch_username }}"
+      become: true
+      become_user: "{{ arch_username }}"
+
+- name: Install user AUR packages
+  kewlfft.aur.aur:
+    use: yay
+    name: "{{ user_aur_packages }}"
+    state: present
+  become: true
+  become_user: "{{ arch_username }}"
+
+- name: Install Citrix AUR package when profile requires it
+  kewlfft.aur.aur:
+    use: yay
+    name: "{{ citrix_aur_packages }}"
+    state: present
+  become: true
+  become_user: "{{ arch_username }}"
+  when: citrix_enabled | bool
+
+- name: Flush handlers to apply locale/systemd changes in this run
+  ansible.builtin.meta: flush_handlers

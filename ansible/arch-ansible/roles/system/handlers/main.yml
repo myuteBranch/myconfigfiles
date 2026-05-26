@@ -1,0 +1,7 @@
+---
+- name: reload systemd
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: generate locales
+  ansible.builtin.command: locale-gen

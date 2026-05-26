@@ -1,0 +1,4 @@
+[Default Applications]
+{% for mime, apps in mime_defaults.items() %}
+{{ mime }}={{ apps | join(';') }};
+{% endfor %}

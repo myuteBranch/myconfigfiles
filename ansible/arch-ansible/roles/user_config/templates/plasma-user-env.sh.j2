@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+{% for k, v in system_environment.items() %}
+export {{ k }}="{{ v }}"
+{% endfor %}
+export XCOMPOSEFILE="{{ user_home }}/.XCompose"
+export PATH="{{ user_home }}/.local/bin:${PATH}"

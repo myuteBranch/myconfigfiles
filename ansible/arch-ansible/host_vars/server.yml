@@ -1,0 +1,14 @@
+---
+arch_hostname: myute-nixos-svr
+arch_username: myuteBranch
+kde_enabled: true
+docker_enabled: true
+gaming_amd_enabled: false
+citrix_enabled: true
+logind_lid_ignore: true
+
+monitors:
+  - name: eDP-1
+    resolution: preferred
+    position: auto
+    scale: 1
